@@ -20,7 +20,7 @@
     
     <style>
         /* ================================================= */
-        /* VARIÁVEIS DE COR (SERÃO INJETADAS PELO JS) */
+        /* VARIÁVEIS DE COR (INJETADAS PELO JS COM BASE NA LITURGIA) */
         /* ================================================= */
         :root {
             /* Padrões iniciais - serão sobrescritos */
@@ -29,13 +29,14 @@
             --primary-highlight: #DC2626; 
             --secondary-contrast: #fcd34d; 
             --card-transparent: rgba(255, 255, 255, 0.85); 
+            --primary-highlight-shadow: rgba(220, 38, 38, 0.4);
         }
         
         body { 
             font-family: 'Merriweather', serif;
             background-color: var(--bg-light-cream); 
             color: var(--text-dark-color); 
-            transition: background-color 0.4s ease; /* Adiciona transição suave no fundo */
+            transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
         /* LIQUID GLASS */
@@ -46,6 +47,7 @@
             border: 1px solid rgba(255, 255, 255, 0.7); 
             box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.1); 
             border-radius: 1rem; 
+            transition: background-color 0.4s ease;
         }
         .header-bg { 
             background-color: var(--card-transparent); 
@@ -53,13 +55,14 @@
             -webkit-backdrop-filter: blur(10px); 
             border-color: rgba(64, 16, 16, 0.1); 
             box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15); 
+            transition: background-color 0.4s ease;
         }
 
         /* DESTAQUE LITÚRGICO (Box de Status) */
         #liturgical-info {
             background-color: var(--primary-highlight); 
             color: white;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            box-shadow: 0 4px 15px var(--primary-highlight-shadow);
             transition: background-color 0.4s ease, box-shadow 0.4s ease;
         }
         .liturgical-icon {
@@ -68,7 +71,7 @@
         }
 
         /* ================================================= */
-        /* CARROSSEL NEUMÓRFICO LITÚRGICO (Mantém o estilo) */
+        /* CARROSSEL NEUMÓRFICO LITÚRGICO */
         /* ================================================= */
         .date-picker-scroll { 
             overflow-x: auto; 
@@ -82,7 +85,6 @@
         }
         
         .date-button { 
-            /* ... estilos do botão Neumórfico ... */
             width: 70px;
             height: 70px;
             display: inline-flex;
@@ -97,7 +99,6 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s, color 0.4s, background-color 0.4s;
             background-color: var(--bg-light-cream);
-            color: #555; 
             box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1), 
                         inset -2px -2px 5px rgba(255, 255, 255, 0.7);
         }
@@ -114,19 +115,19 @@
         .date-button span.day-number { font-size: 1.5rem; line-height: 1; }
         .date-button span.day-text { font-size: 0.6rem; text-transform: uppercase; font-weight: 700; }
 
-        /* ESTILOS DA AGENDA (Usando variáveis injetadas) */
-        .event-title {
+        /* ESTILOS DA AGENDA */
+        .event-title, .event-time {
             color: var(--primary-highlight);
             transition: color 0.4s ease;
+            font-weight: 900;
         }
         .event-time {
-            color: var(--primary-highlight);
-            font-weight: 900; 
             font-size: 1.2rem;
-            transition: color 0.4s ease;
         }
         .event-location {
-            color: #6b7280; 
+            color: var(--text-dark-color);
+            opacity: 0.7;
+            transition: color 0.4s ease;
         }
 
         /* HEADER & FOOTER */
@@ -147,8 +148,8 @@
 
         // *** DADOS FILTRADOS DE NOVEMBRO (APENAS MISSAS) ***
         const AGENDA_DATA = [
-            { "date": "01/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "02/Nov (Domingo)", "dayOfWeek": "DOM", "time": "05:00", "title": "Santa Missa no Cemitério", "location": "Cemitério" },
+            { "date": "01/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa (Véspera de Finados)", "location": "Igreja Matriz" },
+            { "date": "02/Nov (Domingo)", "dayOfWeek": "DOM", "time": "05:00", "title": "Santa Missa no Cemitério (Finados)", "location": "Cemitério" },
             { "date": "03/Nov (Segunda-feira)", "dayOfWeek": "SEG", "time": "19:00", "title": "Santa Missa", "location": "Igreja Nossa Senhora Aparecida" },
             { "date": "04/Nov (Terça-feira)", "dayOfWeek": "TER", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Morangal" },
             { "date": "05/Nov (Quarta-feira)", "dayOfWeek": "QUA", "time": "19:00", "title": "Santa Missa Setor 7", "location": "Bairro Serra Verde" },
@@ -169,7 +170,7 @@
             { "date": "20/Nov (Quinta-feira)", "dayOfWeek": "QUI", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
             { "date": "21/Nov (Sexta-feira)", "dayOfWeek": "SEX", "time": "19:00", "title": "Santa Missa Setor 6", "location": "Bairro Torres" },
             { "date": "22/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa (Cristo Rei)", "location": "Igreja Matriz" },
             { "date": "24/Nov (Segunda-feira)", "dayOfWeek": "SEG", "time": "18:00", "title": "Santa Missa", "location": "Igreja Sagrado Coração" }, 
             { "date": "25/Nov (Terça-feira)", "dayOfWeek": "TER", "time": "19:00", "title": "Santa Missa Setor 4", "location": "Bairro Pereiras" },
             { "date": "26/Nov (Quarta-feira)", "dayOfWeek": "QUA", "time": "19:00", "title": "Santa Missa Setor 1", "location": "Bairro Mendes" },
@@ -179,46 +180,83 @@
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" }
         ];
         
-        // --- MAPA DE CORES LITÚRGICAS (Cor principal, Sombra clara para Neumorphism) ---
-        // Adicionado um tom de cinza/escuro para o texto de alto contraste (Dark Tone)
-        const LITURGICAL_COLORS = {
-            "BRANCO": ["#F3F4F6", "rgba(255, 255, 255, 1)", "#374151"], // Branco, SombraBranca, TextoCinzaEscuro
-            "VERMELHO": ["#DC2626", "rgba(255, 100, 100, 0.6)", "#501515"], // VermelhoVivo, SombraVermelha, TextoVermelhoEscuro
-            "ROXO": ["#8B5CF6", "rgba(180, 150, 255, 0.6)", "#4338CA"], // Roxo, SombraRoxa, TextoRoxoEscuro
-            "VERDE": ["#10B981", "rgba(150, 255, 200, 0.6)", "#065F46"], // Verde, SombraVerde, TextoVerdeEscuro
-            "ROSA": ["#F472B6", "rgba(255, 200, 220, 0.6)", "#9D174D"], // Rosa, SombraRosa, TextoRosaEscuro
-            "AMARELO": ["#FBBF24", "rgba(255, 240, 180, 0.6)", "#B45309"] // Amarelo/Dourado, SombraAmarela, TextoMarromEscuro
+        // --- DADOS LITÚRGICOS COMPLETOS (COR E SANTO/FESTA) ---
+        const LITURGICAL_INFO_MAP = {
+            "01/Nov": { color: "BRANCO", title: "Todos os Santos (Solenidade)" },
+            "02/Nov": { color: "ROXO", title: "Comemoração dos Fiéis Defuntos (Finados)" },
+            "03/Nov": { color: "BRANCO", title: "São Martinho de Porres, Presbítero (MF)" },
+            "04/Nov": { color: "BRANCO", title: "São Carlos Borromeu, Bispo (MO)" },
+            "05/Nov": { color: "VERDE", title: "Santos Zacarias e Isabel (Féria)" },
+            "06/Nov": { color: "VERDE", title: "São Nuno Álvares Pereira (Féria)" },
+            "07/Nov": { color: "VERDE", title: "São Vilibrordo (Féria)" },
+            "08/Nov": { color: "BRANCO", title: "Santa Isabel da Trindade (N. Sra. no Sábado)" },
+            "09/Nov": { color: "BRANCO", title: "Dedicação da Basílica de Latrão (Festa)" },
+            "10/Nov": { color: "BRANCO", title: "São Leão Magno, Papa e Doutor da Igreja" },
+            "11/Nov": { color: "BRANCO", title: "São Martinho de Tours, Bispo" },
+            "12/Nov": { color: "VERMELHO", title: "São Josafá Kuncewicz, Bispo e Mártir" },
+            "13/Nov": { color: "VERDE", title: "São Diogo de Alcalá (Féria)" },
+            "14/Nov": { color: "VERDE", title: "São Gregório Palamas (Féria)" },
+            "15/Nov": { color: "BRANCO", title: "Santo Alberto Magno, Bispo e Doutor da Igreja" },
+            "16/Nov": { color: "BRANCO", title: "Santa Margarida da Escócia / Santa Gertrudes" },
+            "17/Nov": { color: "VERDE", title: "Santa Isabel da Hungria (Féria)" },
+            "18/Nov": { color: "BRANCO", title: "Dedicação das Basílicas de S. Pedro e S. Paulo" },
+            "19/Nov": { color: "VERMELHO", title: "Santos Roque G. e Comp., Mártires (MO)" },
+            "20/Nov": { color: "VERDE", title: "São Félix de Valois (Féria)" },
+            "21/Nov": { color: "BRANCO", title: "Apresentação de Nossa Senhora (Memória)" },
+            "22/Nov": { color: "VERMELHO", title: "Santa Cecília, Virgem e Mártir (Memória)" },
+            "23/Nov": { color: "BRANCO", title: "Nosso Senhor Jesus Cristo Rei do Universo (Solenidade)" }, 
+            "24/Nov": { color: "VERMELHO", title: "Santos André Dung-Lac e Comp., Mártires (MO)" },
+            "25/Nov": { color: "VERMELHO", title: "Santa Catarina de Alexandria, Virgem e Mártir" },
+            "26/Nov": { color: "VERDE", title: "São Leonardo de Porto Maurício (Féria)" },
+            "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" },
+            "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" },
+            "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, 
+            "30/Nov": { color: "VERMELHO", title: "Santo André, Apóstolo (Festa)" } 
         };
 
-        function getLiturgicalColor(dateStr) {
+        // --- MAPA DE CORES LITÚRGICAS (Principal, Sombra Clara, Tom Escuro, Sombra para Box) ---
+        const LITURGICAL_COLORS = {
+            "BRANCO": ["#F3F4F6", "rgba(255, 255, 255, 1)", "#374151", "rgba(200, 200, 200, 0.5)"],
+            "VERMELHO": ["#DC2626", "rgba(255, 100, 100, 0.6)", "#501515", "rgba(220, 38, 38, 0.4)"],
+            "ROXO": ["#8B5CF6", "rgba(180, 150, 255, 0.6)", "#4338CA", "rgba(139, 92, 246, 0.4)"],
+            "VERDE": ["#10B981", "rgba(150, 255, 200, 0.6)", "#065F46", "rgba(16, 185, 129, 0.4)"],
+            "AMARELO": ["#FBBF24", "rgba(255, 240, 180, 0.6)", "#B45309", "rgba(251, 191, 36, 0.4)"]
+        };
+
+        function getLiturgicalInfo(dateStr) {
             const dayMonth = dateStr.split(' ')[0];
+            const info = LITURGICAL_INFO_MAP[dayMonth];
             
-            // Lógica de Novembro de 2025
-            if (dayMonth === "23/Nov") return LITURGICAL_COLORS["AMARELO"]; // Cristo Rei
-            if (dayMonth === "25/Nov") return LITURGICAL_COLORS["VERMELHO"]; // Santa Catarina
-            if (dayMonth === "30/Nov") return LITURGICAL_COLORS["ROXO"]; // 1º Advento
-            
-            // Padrão (inclui ferial e novenas)
-            return LITURGICAL_COLORS["VERDE"]; 
+            if (info) {
+                const colors = LITURGICAL_COLORS[info.color] || LITURGICAL_COLORS["VERDE"];
+                return {
+                    colorName: info.color,
+                    title: info.title,
+                    colors: colors
+                };
+            }
+            // Fallback para dias não mapeados, usa Féria Verde
+            return {
+                colorName: "VERDE",
+                title: "Féria (Dia Comum)",
+                colors: LITURGICAL_COLORS["VERDE"]
+            };
         }
 
         // LÓGICA CHAVE: Aplica as cores dinâmicas no BODY
         function applyDynamicTheme(colors) {
-            const [primary, shadowLight, darkTone] = colors;
+            const [primary, shadowLight, darkTone, shadowBox] = colors;
             
-            // Define as variáveis CSS globais
             document.documentElement.style.setProperty('--primary-highlight', primary);
             document.documentElement.style.setProperty('--text-dark-color', darkTone);
+            document.documentElement.style.setProperty('--primary-highlight-shadow', shadowBox);
             
-            // Ajusta o fundo principal e sombra do carrossel (baseado no primary, mas mais claro)
-            const lightBg = primary + '10'; // Tom muito claro da cor primária
+            // Cor de Fundo Suave (Tom muito claro da cor primária + transparência)
+            const lightBg = primary + '10'; 
             document.documentElement.style.setProperty('--bg-light-cream', lightBg);
-            document.documentElement.style.setProperty('--card-transparent', primary + '10'); // Mantém o efeito Liquid Glass
+            document.documentElement.style.setProperty('--card-transparent', primary + '10'); 
 
-            // Ajusta a cor da barra de status
             document.querySelector('meta[name="theme-color"]').setAttribute('content', lightBg);
-            
-            // Ajusta a cor do texto principal do body
             document.body.style.color = darkTone;
         }
 
@@ -291,20 +329,18 @@
                 const dayNumber = fullDate.split('/')[0];
                 const dayText = fullDate.split('(')[1].replace(')', '').substring(0, 3).toUpperCase();
                 
-                const liturgicalColors = getLiturgicalColor(fullDate);
-                const bgColor = liturgicalColors[0];
-                const lightShadow = liturgicalColors[1];
+                const liturgicalInfo = getLiturgicalInfo(fullDate);
+                const [bgColor, lightShadow, darkTone] = liturgicalInfo.colors;
 
                 const button = document.createElement('button');
                 button.className = 'date-button';
                 button.setAttribute('data-full-date', fullDate);
                 
-                // Injeta as cores dinâmicas para o modo 'active'
                 button.style.setProperty('--active-bg-color', bgColor);
                 button.style.setProperty('--active-shadow-light', lightShadow);
                 
-                // Garante que o texto do botão inativo tenha a cor litúrgica mais escura (Dark Tone)
-                button.style.color = liturgicalColors[2];
+                // Cor do texto do botão inativo usa o tom escuro do dia
+                button.style.color = darkTone;
 
                 button.innerHTML = `
                     <span class="day-number">${dayNumber}</span>
@@ -330,11 +366,9 @@
         function selectDate(fullDate) {
             currentSelectedDate = fullDate;
             
-            // 1. APLICA TEMA DINÂMICO A TODO O SITE
-            const liturgicalColors = getLiturgicalColor(fullDate);
-            applyDynamicTheme(liturgicalColors);
+            const liturgicalInfo = getLiturgicalInfo(fullDate);
+            applyDynamicTheme(liturgicalInfo.colors);
 
-            // 2. RENDERIZA E ATUALIZA O CARROSSEL
             renderAgenda(); 
             renderDatePicker(); 
         }
@@ -349,25 +383,23 @@
             );
 
             // --- INFORMAÇÃO LITÚRGICA DO DIA (Box de Status) ---
-            const liturgicalColorArray = getLiturgicalColor(currentSelectedDate);
-            const liturgicalColorName = Object.keys(LITURGICAL_COLORS).find(key => LITURGICAL_COLORS[key][0] === liturgicalColorArray[0]);
-            
+            const liturgicalInfo = getLiturgicalInfo(currentSelectedDate);
             const isToday = currentSelectedDate === TODAY_DATE;
             const dayName = currentSelectedDate.split('(')[1].replace(')', '');
 
             const liturgicalBox = `
                 <div id="liturgical-info" class="rounded-xl p-4 mb-6 text-center">
                     <p class="text-sm font-bold opacity-80 mb-2">
-                        ${isToday ? '🎉 HOJE, 25/NOV 🎉' : '🗓️ DATA SELECIONADA'}
+                        ${isToday ? '🎉 HOJE 🎉' : '🗓️ DATA SELECIONADA'}
                     </p>
-                    <div class="flex items-center justify-center gap-3">
-                        <i data-lucide="cross" class="w-6 h-6 liturgical-icon flex-shrink-0"></i>
-                        <div class="text-left">
-                            <p class="text-lg font-extrabold leading-none">Cor: ${liturgicalColorName} (${dayName})</p>
-                            <p class="text-sm font-semibold opacity-90">
-                                ${currentSelectedDate === TODAY_DATE ? 'Santa Catarina de Alexandria, Mártir' : 'Féria ou Memória'}
-                            </p>
+                    <div class="flex flex-col items-center justify-center gap-1">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="cross" class="w-6 h-6 liturgical-icon flex-shrink-0"></i>
+                            <p class="text-lg font-extrabold leading-none">Cor: ${liturgicalInfo.colorName} (${dayName})</p>
                         </div>
+                        <p class="text-xl font-extrabold mt-1">
+                            ${liturgicalInfo.title}
+                        </p>
                     </div>
                 </div>
             `;
@@ -401,7 +433,6 @@
                 const eventDiv = document.createElement('div');
                 eventDiv.className = 'flex justify-between items-center py-3 border-b border-gray-300 last:border-b-0';
                 
-                // Note: O bug 'undefined' foi corrigido garantindo que todas as tags HTML tenham classes e variáveis CSS corretas.
                 eventDiv.innerHTML = `
                     <div class="flex-1">
                         <p class="font-bold text-base event-title">${event.title}</p>
@@ -419,7 +450,6 @@
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             getUniqueDates(); 
-            // O selectDate inicializa o currentSelectedDate, aplica o tema e renderiza
             selectDate(currentSelectedDate); 
         });
 
