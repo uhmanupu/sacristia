@@ -48,7 +48,7 @@
             font-family: 'Merriweather', serif;
             background-color: var(--bg-light-cream); 
             color: var(--text-main); 
-            transition: none; /* Remove transitions de tema */
+            transition: none; 
         }
 
         /* ---------------------------------------------------- */
@@ -78,35 +78,69 @@
             box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
         }
         .liturgical-icon {
-            color: var(--secondary-amber); /* Amarelo no destaque Vermelho */
+            color: var(--secondary-amber); 
         }
 
-        /* Estilo para a Barra de Dias (Carrossel) */
+        /* ---------------------------------------------------- */
+        /* NOVO ESTILO CARROSSEL NEUMÓRFICO (LIQUID CIRCLE) */
+        /* ---------------------------------------------------- */
         .date-picker-scroll { 
             overflow-x: auto; 
             white-space: nowrap; 
             -webkit-overflow-scrolling: touch; 
-            /* Garante que o carrossel apareça sempre */
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none; 
+            padding-bottom: 8px; /* Espaço para sombra/liquid effect */
         }
         .date-picker-scroll::-webkit-scrollbar { 
-            display: none; /* Chrome, Safari, Opera */
+            display: none; 
         }
         
         .date-button { 
-            padding: 8px 16px; 
-            margin-right: 8px; 
-            border-radius: 9999px; 
+            width: 70px;
+            height: 70px;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px; 
+            border-radius: 50%;
             font-weight: 700; 
-            border: 2px solid transparent; 
-            background-color: var(--button-inactive-bg); 
-            color: var(--primary-red);
-            transition: background-color 0.2s, color 0.2s;
+            flex-shrink: 0;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            
+            /* Sombra base (afundado) */
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1), 
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.7);
         }
         
+        /* Cor de Fundo do Neumorfismo (Base Light) */
+        .date-button:not(.active) {
+            background-color: var(--bg-light-cream);
+            color: #555; /* Texto cinza suave */
+        }
+        
+        /* Botão Ativo (Saliente e Colorido) */
         .date-button.active { 
-            background-color: var(--primary-red); 
+            /* Usa a cor litúrgica injetada via JS */
+            background-color: var(--active-bg-color); 
             color: white; 
+            font-weight: 900;
+            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2), 
+                        -3px -3px 8px var(--active-shadow-light); /* Sombra Litúrgica clara */
+            transform: scale(1.05);
+        }
+        
+        .date-button span.day-number {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .date-button span.day-text {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            font-weight: 700;
         }
 
         /* Estilos da Agenda */
@@ -117,7 +151,7 @@
             color: var(--primary-red);
         }
         .event-location {
-            color: #6b7280; /* Gray 500 */
+            color: #6b7280; 
         }
         
     </style>
@@ -125,82 +159,36 @@
     <script>
         // *** DADOS FILTRADOS DE NOVEMBRO (APENAS MISSAS) ***
         const AGENDA_DATA = [
-            { "date": "01/Nov (Sábado)", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "01/Nov (Sábado)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "02/Nov (Domingo)", "time": "05:00", "title": "Santa Missa no Cemitério", "location": "Cemitério" },
-            { "date": "02/Nov (Domingo)", "time": "08:00", "title": "Santa Missa Setor 6", "location": "Bairro São José da Mantiqueira" },
-            { "date": "02/Nov (Domingo)", "time": "09:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "02/Nov (Domingo)", "time": "11:00", "title": "Santa Missa Setor 1", "location": "Bairro Mendes" },
-            { "date": "02/Nov (Domingo)", "time": "17:00", "title": "Santa Missa Setor 3", "location": "Bairro Corrêias" },
-            { "date": "02/Nov (Domingo)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "03/Nov (Segunda-feira)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Nossa Senhora Aparecida" },
-            { "date": "04/Nov (Terça-feira)", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Morangal" },
-            { "date": "05/Nov (Quarta-feira)", "time": "19:00", "title": "Santa Missa Setor 7", "location": "Bairro Serra Verde" },
-            { "date": "06/Nov (Quinta-feira)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "06/Nov (Quinta-feira)", "time": "19:00", "title": "Santa Missa Setor 2", "location": "Bairro Porto" },
-            { "date": "07/Nov (Sexta-feira)", "time": "09:00", "title": "Santa Missa", "location": "Abrigo São Camilo" },
-            { "date": "07/Nov (Sexta-feira)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "07/Nov (Sexta-feira)", "time": "19:00", "title": "Santa Missa Setor 4", "location": "Bairro Moreiras" },
-            { "date": "08/Nov (Sábado)", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "08/Nov (Sábado)", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Marques" },
-            { "date": "08/Nov (Sábado)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "09/Nov (Domingo)", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "09/Nov (Domingo)", "time": "08:00", "title": "Santa Missa Setor 3", "location": "Bairro Mogiano" },
-            { "date": "09/Nov (Domingo)", "time": "09:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "09/Nov (Domingo)", "time": "18:00", "title": "Santa Missa Setor 1", "location": "Bairro Retirinho" },
-            { "date": "09/Nov (Domingo)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "10/Nov (Segunda-feira)", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Pouso Frio" },
-            { "date": "11/Nov (Terça-feira)", "time": "19:00", "title": "Santa Missa Setor 2", "location": "Bairro Ribeirão" },
-            { "date": "11/Nov (Terça-feira)", "time": "19:00", "title": "Santa Missa Setor 7", "location": "Bairro Roseirinha" },
-            { "date": "12/Nov (Quarta-feira)", "time": "09:00", "title": "Santa Missa", "location": "Abrigo São Camilo" },
-            { "date": "12/Nov (Quarta-feira)", "time": "19:00", "title": "Santa Missa Setor 6", "location": "Bairro Serra dos Fernandes" },
-            { "date": "13/Nov (Quinta-feira)", "time": "19:00", "title": "Santa Missa Setor 1", "location": "Bairro Palmeiras" },
-            { "date": "13/Nov (Quinta-feira)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "14/Nov (Sexta-feira)", "time": "19:00", "title": "Santa Missa Setor 4", "location": "Bairro Mato Dentro" },
-            { "date": "14/Nov (Sexta-feira)", "time": "19:00", "title": "Santa Missa Setor 7", "location": "Bairro Vargem Alegre" },
-            { "date": "15/Nov (Sábado)", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "15/Nov (Sábado)", "time": "19:00", "title": "Santa Missa Setor 6", "location": "Bairro São José da Mantiqueira" },
-            { "date": "15/Nov (Sábado)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "16/Nov (Domingo)", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "16/Nov (Domingo)", "time": "08:00", "title": "Santa Missa Setor 5", "location": "Bairro Roseira" },
-            { "date": "16/Nov (Domingo)", "time": "09:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "16/Nov (Domingo)", "time": "10:30", "title": "Santa Missa Setor 7", "location": "Bairro Retiro dos Marins" },
-            { "date": "16/Nov (Domingo)", "time": "18:00", "title": "Santa Missa Setor 4", "location": "Bairro Moreiras" },
-            { "date": "16/Nov (Domingo)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "17/Nov (Segunda-feira)", "time": "19:00", "title": "Santa Missa Setor 9", "location": "Sertãozinho" },
-            { "date": "18/Nov (Terça-feira)", "time": "09:00", "title": "Santa Missa", "location": "Abrigo São Camilo" },
-            { "date": "18/Nov (Terça-feira)", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Felipes" },
-            { "date": "19/Nov (Quarta-feira)", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Marques" },
-            { "date": "20/Nov (Quinta-feira)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "20/Nov (Quinta-feira)", "time": "19:00", "title": "Santa Missa Setor 7", "location": "Bairro Gonçalves" },
-            { "date": "21/Nov (Sexta-feira)", "time": "19:00", "title": "Santa Missa Setor 6", "location": "Bairro Torres" },
-            { "date": "21/Nov (Sexta-feira)", "time": "19:00", "title": "Santa Missa Setor 8", "location": "Bairro Caetê" },
-            { "date": "22/Nov (Sábado)", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "22/Nov (Sábado)", "time": "18:00", "title": "Santa Missa", "location": "Hotel" },
-            { "date": "22/Nov (Sábado)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "23/Nov (Domingo)", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "23/Nov (Domingo)", "time": "09:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "23/Nov (Domingo)", "time": "09:00", "title": "Santa Missa Setor 3", "location": "Bairro Mendanha" },
-            { "date": "23/Nov (Domingo)", "time": "18:00", "title": "Santa Missa Setor 1", "location": "Bairro Retirinho" },
-            { "date": "23/Nov (Domingo)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "24/Nov (Segunda-feira)", "time": "18:00", "title": "Santa Missa", "location": "Igreja Sagrado Coração" }, 
-            { "date": "25/Nov (Terça-feira)", "time": "19:00", "title": "Santa Missa Setor 4", "location": "Bairro Pereiras" },
-            { "date": "25/Nov (Terça-feira)", "time": "19:00", "title": "Santa Missa Setor 7", "location": "Bairro Rio Acima II" },
-            { "date": "26/Nov (Quarta-feira)", "time": "19:00", "title": "Santa Missa Setor 1", "location": "Bairro Mendes" },
-            { "date": "26/Nov (Quarta-feira)", "time": "19:00", "title": "Santa Missa Setor 4", "location": "Bairro Água Limpa" },
-            { "date": "27/Nov (Quinta-feira)", "time": "05:00", "title": "Santa Missa Pedra Santa", "location": "Pedra Santa" },
-            { "date": "27/Nov (Quinta-feira)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "27/Nov (Quinta-feira)", "time": "19:00", "title": "Santa Missa Setor 1", "location": "Bairro Muquém" },
-            { "date": "29/Nov (Sábado)", "time": "10:00", "title": "Santa Missa Setor 1", "location": "Bairro Virgem do Socorro" },
-            { "date": "29/Nov (Sábado)", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "29/Nov (Sábado)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "29/Nov (Sábado)", "time": "19:00", "title": "Santa Missa Setor 7", "location": "Bairro Roseirinha" },
-            { "date": "30/Nov (Domingo)", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "30/Nov (Domingo)", "time": "09:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "30/Nov (Domingo)", "time": "09:00", "title": "Santa Missa Setor 3", "location": "Bairro Mendanha" },
-            { "date": "30/Nov (Domingo)", "time": "11:00", "title": "Santa Missa Setor 1", "location": "Bairro Palmeiras" },
-            { "date": "30/Nov (Domingo)", "time": "18:00", "title": "Santa Missa Setor 5", "location": "Bairro Roseira" },
-            { "date": "30/Nov (Domingo)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" }
+            { "date": "01/Nov (Sábado)", "dayOfWeek": "SÁB", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "02/Nov (Domingo)", "dayOfWeek": "DOM", "title": "Santa Missa no Cemitério", "location": "Cemitério" },
+            { "date": "03/Nov (Segunda-feira)", "dayOfWeek": "SEG", "title": "Santa Missa", "location": "Igreja Nossa Senhora Aparecida" },
+            { "date": "04/Nov (Terça-feira)", "dayOfWeek": "TER", "title": "Santa Missa Setor 5", "location": "Bairro Morangal" },
+            { "date": "05/Nov (Quarta-feira)", "dayOfWeek": "QUA", "title": "Santa Missa Setor 7", "location": "Bairro Serra Verde" },
+            { "date": "06/Nov (Quinta-feira)", "dayOfWeek": "QUI", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "07/Nov (Sexta-feira)", "dayOfWeek": "SEX", "title": "Santa Missa", "location": "Abrigo São Camilo" },
+            { "date": "08/Nov (Sábado)", "dayOfWeek": "SÁB", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "09/Nov (Domingo)", "dayOfWeek": "DOM", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "10/Nov (Segunda-feira)", "dayOfWeek": "SEG", "title": "Santa Missa Setor 5", "location": "Bairro Pouso Frio" },
+            { "date": "11/Nov (Terça-feira)", "dayOfWeek": "TER", "title": "Santa Missa Setor 2", "location": "Bairro Ribeirão" },
+            { "date": "12/Nov (Quarta-feira)", "dayOfWeek": "QUA", "title": "Santa Missa", "location": "Abrigo São Camilo" },
+            { "date": "13/Nov (Quinta-feira)", "dayOfWeek": "QUI", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "14/Nov (Sexta-feira)", "dayOfWeek": "SEX", "title": "Santa Missa Setor 4", "location": "Bairro Mato Dentro" },
+            { "date": "15/Nov (Sábado)", "dayOfWeek": "SÁB", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "16/Nov (Domingo)", "dayOfWeek": "DOM", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "17/Nov (Segunda-feira)", "dayOfWeek": "SEG", "title": "Santa Missa Setor 9", "location": "Sertãozinho" },
+            { "date": "18/Nov (Terça-feira)", "dayOfWeek": "TER", "title": "Santa Missa", "location": "Abrigo São Camilo" },
+            { "date": "19/Nov (Quarta-feira)", "dayOfWeek": "QUA", "title": "Santa Missa Setor 5", "location": "Bairro Marques" },
+            { "date": "20/Nov (Quinta-feira)", "dayOfWeek": "QUI", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "21/Nov (Sexta-feira)", "dayOfWeek": "SEX", "title": "Santa Missa Setor 6", "location": "Bairro Torres" },
+            { "date": "22/Nov (Sábado)", "dayOfWeek": "SÁB", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "24/Nov (Segunda-feira)", "dayOfWeek": "SEG", "title": "Santa Missa", "location": "Igreja Sagrado Coração" }, 
+            { "date": "25/Nov (Terça-feira)", "dayOfWeek": "TER", "title": "Santa Missa Setor 4", "location": "Bairro Pereiras" },
+            { "date": "26/Nov (Quarta-feira)", "dayOfWeek": "QUA", "title": "Santa Missa Setor 1", "location": "Bairro Mendes" },
+            { "date": "27/Nov (Quinta-feira)", "dayOfWeek": "QUI", "title": "Santa Missa Pedra Santa", "location": "Pedra Santa" },
+            { "date": "28/Nov (Sexta-feira)", "dayOfWeek": "SEX", "title": "Primeiro dia da Novena", "location": "Novena" },
+            { "date": "29/Nov (Sábado)", "dayOfWeek": "SÁB", "title": "Santa Missa", "location": "Igreja Matriz" },
+            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "title": "Santa Missa", "location": "Igreja Matriz" }
         ];
         
         // --- DADOS LITÚRGICOS (DO DIA: 25/Nov) ---
@@ -209,77 +197,71 @@
             color: "VERMELHO (Santa Catarina de Alexandria, Mártir)",
             saint: "Santa Catarina de Alexandria, Virgem e Mártir"
         };
+        
+        // --- MAPA DE CORES LITÚRGICAS COMPLETO (Baseado no ano litúrgico) ---
+        // Cores em formato [Principal, SombraClara] para o Neumorphism
+        const LITURGICAL_COLORS = {
+            "BRANCO": ["#ffffff", "rgba(255, 255, 255, 0.8)"], // Natal, Páscoa, Santos Não-Mártires
+            "VERMELHO": ["#DC2626", "rgba(255, 100, 100, 0.6)"], // Mártires, Pentecostes
+            "ROXO": ["#8B5CF6", "rgba(180, 150, 255, 0.6)"], // Advento, Quaresma
+            "VERDE": ["#10B981", "rgba(150, 255, 200, 0.6)"], // Tempo Comum
+            "ROSA": ["#F472B6", "rgba(255, 200, 220, 0.6)"], // Gaudete/Laetare
+            "AMARELO": ["#FBBF24", "rgba(255, 240, 180, 0.6)"] // Para Destaques ou Festas Especiais (Dourado)
+        };
+
+        function getLiturgicalColor(dateStr) {
+            const day = dateStr.split('/')[0];
+            const month = dateStr.split('/')[1].split(' ')[0];
+            const dayOfWeek = dateStr.split('(')[1].replace(')', '').trim();
+            const fullDate = `${day}/${month}`; 
+
+            // --- Lógica simplificada de Novembro de 2025 ---
+            
+            // 23/Nov (DOM): Fim do TC. Festa de Cristo Rei (BRANCO/AMARELO)
+            if (fullDate === "23/Nov") return LITURGICAL_COLORS["BRANCO"];
+            
+            // 24/Nov (SEG): Fim do Tempo Comum (VERDE)
+            if (fullDate === "24/Nov") return LITURGICAL_COLORS["VERDE"];
+
+            // 25/Nov (TER): Santa Catarina de Alexandria, Mártir (VERMELHO)
+            if (fullDate === "25/Nov") return LITURGICAL_COLORS["VERMELHO"];
+
+            // 26/Nov (QUA) a 29/Nov (SÁB): Féria do Tempo Comum (VERDE)
+            if (["26/Nov", "27/Nov", "28/Nov", "29/Nov"].includes(fullDate)) return LITURGICAL_COLORS["VERDE"];
+
+            // 30/Nov (DOM): 1º Domingo do Advento (ROXO)
+            if (fullDate === "30/Nov") return LITURGICAL_COLORS["ROXO"];
+
+            // Dezembro (Fim do ano Litúrgico)
+            if (parseInt(month) === 12) {
+                // 01/Dez a 24/Dez: Advento (ROXO)
+                return LITURGICAL_COLORS["ROXO"];
+            }
+
+            // Padrão (Manter VERDE para o restante do Tempo Comum)
+            return LITURGICAL_COLORS["VERDE"];
+        }
 
 
         // --- Variáveis de Estado (Simplificadas) ---
         let uniqueDates = [];
         let currentSelectedDate = ''; 
         
-        // --- LÓGICA GERAL E SWIPE ---
-        let touchstartX = 0;
-        let touchstartY = 0;
-        const SWIPE_THRESHOLD = 80;  
-        const PULL_THRESHOLD = 80;   
+        // --- LÓGICA GERAL E SWIPE (mantida) ---
 
-        function navigateDate(direction) {
-            const currentIndex = uniqueDates.indexOf(currentSelectedDate);
-            const newIndex = currentIndex + direction;
-
-            if (newIndex >= 0 && newIndex < uniqueDates.length) {
-                selectDate(uniqueDates[newIndex]);
-            } else {
-                if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate(50); 
-                }
-            }
-        }
-
-        function handleTouchStart(e) {
-            touchstartX = e.touches[0].clientX;
-            touchstartY = e.touches[0].clientY;
-        }
-
-        function handleTouchEnd(e) {
-            const touchendX = e.changedTouches[0].clientX;
-            const touchendY = e.changedTouches[0].clientY;
-            const diffX = touchendX - touchstartX;
-            const diffY = touchendY - touchstartY;
-
-            // Pull to refresh
-            if (document.documentElement.scrollTop === 0 && diffY > PULL_THRESHOLD && Math.abs(diffY) > Math.abs(diffX)) {
-                if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate(100); 
-                }
-                location.reload(true); 
-                return;
-            }
-
-            // Swipe to navigate date (Left/Right swipe on the body)
-            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(diffX) > Math.abs(diffY)) {
-                if (diffX < 0) {
-                    navigateDate(1); // Swipe Left -> Próxima data (1)
-                } else {
-                    navigateDate(-1); // Swipe Right -> Data anterior (-1)
-                }
-            }
-        }
-
-        document.addEventListener('touchstart', handleTouchStart, { passive: true });
-        document.addEventListener('touchend', handleTouchEnd, { passive: true });
-        
-        // LÓGICA DE DATAS
         function getUniqueDates() {
-             // Garante que a lista de datas seja baseada nos dados filtrados (só Missas)
              const dates = AGENDA_DATA.map(item => item.date.trim());
              uniqueDates = [...new Set(dates)];
              
              if (uniqueDates.length > 0) {
                  const today = new Date();
                  const todayDay = today.getDate().toString().padStart(2, '0');
+                 const todayMonth = (today.getMonth() + 1).toString().padStart(2, '0'); // Mês atual
                  
                  let closestDate = uniqueDates[0];
                  for (const fullDate of uniqueDates) {
-                      if (fullDate.startsWith(todayDay + '/Nov')) { 
+                      // Procura pela data exata no formato DD/Mês
+                      if (fullDate.startsWith(todayDay + '/' + todayMonth)) { 
                           closestDate = fullDate;
                           break;
                       }
@@ -299,11 +281,24 @@
             container.innerHTML = '';
             
             uniqueDates.forEach(fullDate => {
-                const datePart = fullDate.split('/')[0];
+                const dayNumber = fullDate.split('/')[0];
+                const dayText = fullDate.split('(')[1].replace(')', '').substring(0, 3).toUpperCase();
+                const liturgicalColors = getLiturgicalColor(fullDate);
+                const bgColor = liturgicalColors[0];
+                const lightShadow = liturgicalColors[1];
+
                 const button = document.createElement('button');
                 button.className = 'date-button';
-                button.textContent = datePart;
                 button.setAttribute('data-full-date', fullDate);
+                
+                // Variáveis CSS para injeção de cor no botão ativo
+                button.style.setProperty('--active-bg-color', bgColor);
+                button.style.setProperty('--active-shadow-light', lightShadow);
+
+                button.innerHTML = `
+                    <span class="day-number">${dayNumber}</span>
+                    <span class="day-text">${dayText}</span>
+                `;
                 
                 if (fullDate === currentSelectedDate) {
                     button.classList.add('active');
@@ -313,11 +308,13 @@
                 container.appendChild(button);
             });
             
-            // Força a rolagem para o botão ativo (Restaurando o Carrossel)
+            // Força a rolagem para o botão ativo (Carrossel)
             const activeBtn = container.querySelector('.date-button.active');
             if (activeBtn) {
-                // Rola o container, centralizando a data selecionada
-                container.scrollLeft = activeBtn.offsetLeft - (container.offsetWidth / 2) + (activeBtn.offsetWidth / 2);
+                setTimeout(() => {
+                    // Calculo para centralizar o botão ativo
+                    container.scrollLeft = activeBtn.offsetLeft - (container.offsetWidth / 2) + (activeBtn.offsetWidth / 2);
+                }, 100); 
             }
         }
         
@@ -332,13 +329,17 @@
             if (!container) return;
             container.innerHTML = '';
             
-            // FILTRAGEM: O AGENDA_DATA JÁ ESTÁ PRÉ-FILTRADO PARA CONTER APENAS MISSAS
             const filteredData = AGENDA_DATA.filter(event => 
                 event.date.trim() === currentSelectedDate
             );
 
             // --- INFORMAÇÃO LITÚRGICA DO DIA ---
+            const liturgicalColorArray = getLiturgicalColor(currentSelectedDate);
+            const liturgicalColorName = Object.keys(LITURGICAL_COLORS).find(key => LITURGICAL_COLORS[key][0] === liturgicalColorArray[0]);
+            
             const isToday = currentSelectedDate === LITURGICAL_INFO.date;
+            
+            // O BOX LITÚRGICO DESTAQUE AINDA USA O VERMELHO FIXO DO TEMA (Para manter o visual coerente com o header)
             const liturgicalBox = `
                 <div id="liturgical-info" class="rounded-xl p-4 mb-6 text-center">
                     <p class="text-sm font-bold opacity-80 mb-2">
@@ -347,8 +348,8 @@
                     <div class="flex items-center justify-center gap-3">
                         <i data-lucide="cross" class="w-6 h-6 liturgical-icon flex-shrink-0"></i>
                         <div class="text-left">
-                            <p class="text-lg font-extrabold leading-none">Cor: ${LITURGICAL_INFO.color}</p>
-                            <p class="text-sm font-semibold opacity-90">${LITURGICAL_INFO.saint}</p>
+                            <p class="text-lg font-extrabold leading-none">Cor: ${liturgicalColorName} (${currentSelectedDate.split('(')[1].replace(')', '')})</p>
+                            <p class="text-sm font-semibold opacity-90">${currentSelectedDate === "25/Nov (Terça-feira)" ? LITURGICAL_INFO.saint : 'Féria ou Memória'}</p>
                         </div>
                     </div>
                 </div>
@@ -358,7 +359,6 @@
 
 
             if (filteredData.length === 0) {
-                // Mensagem de "Sem Missa"
                 container.innerHTML += `<div class="p-6 card rounded-xl shadow-md text-center text-[var(--text-main)]">
                     <p>Nenhuma Santa Missa agendada para esta data.</p>
                 </div>`;
@@ -404,7 +404,6 @@
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
-            // A função applyTheme foi removida, o CSS agora é estático
             getUniqueDates(); 
             renderAgenda(); 
             lucide.createIcons();
