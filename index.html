@@ -20,21 +20,22 @@
     
     <style>
         /* ================================================= */
-        /* VARIÁVEIS DE COR FIXAS (VERMELHO LITÚRGICO) */
+        /* VARIÁVEIS DE COR (SERÃO INJETADAS PELO JS) */
         /* ================================================= */
         :root {
+            /* Padrões iniciais - serão sobrescritos */
             --bg-light-cream: #FBEBEB; 
-            --text-dark-red: #501515; 
-            --primary-red: #DC2626; 
-            --secondary-amber: #fcd34d; 
+            --text-dark-color: #501515; 
+            --primary-highlight: #DC2626; 
+            --secondary-contrast: #fcd34d; 
             --card-transparent: rgba(255, 255, 255, 0.85); 
-            --text-main: #501515; 
         }
         
         body { 
             font-family: 'Merriweather', serif;
             background-color: var(--bg-light-cream); 
-            color: var(--text-main); 
+            color: var(--text-dark-color); 
+            transition: background-color 0.4s ease; /* Adiciona transição suave no fundo */
         }
 
         /* LIQUID GLASS */
@@ -54,18 +55,20 @@
             box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15); 
         }
 
-        /* DESTAQUE LITÚRGICO (Mantido em Vermelho Fixo para o Box de Status) */
+        /* DESTAQUE LITÚRGICO (Box de Status) */
         #liturgical-info {
-            background-color: var(--primary-red); 
+            background-color: var(--primary-highlight); 
             color: white;
             box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
         }
         .liturgical-icon {
-            color: var(--secondary-amber); 
+            color: var(--secondary-contrast); 
+            transition: color 0.4s ease;
         }
 
         /* ================================================= */
-        /* CARROSSEL NEUMÓRFICO LITÚRGICO */
+        /* CARROSSEL NEUMÓRFICO LITÚRGICO (Mantém o estilo) */
         /* ================================================= */
         .date-picker-scroll { 
             overflow-x: auto; 
@@ -79,6 +82,7 @@
         }
         
         .date-button { 
+            /* ... estilos do botão Neumórfico ... */
             width: 70px;
             height: 70px;
             display: inline-flex;
@@ -91,17 +95,14 @@
             flex-shrink: 0;
             border: none;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, color 0.4s, background-color 0.4s;
             background-color: var(--bg-light-cream);
             color: #555; 
-            
-            /* Sombra base (afundado) */
             box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1), 
                         inset -2px -2px 5px rgba(255, 255, 255, 0.7);
         }
         
         .date-button.active { 
-            /* Usa as variáveis injetadas via JS para cor dinâmica */
             background-color: var(--active-bg-color); 
             color: white; 
             font-weight: 900;
@@ -110,27 +111,32 @@
             transform: scale(1.05);
         }
         
-        .date-button span.day-number {
-            font-size: 1.5rem;
-            line-height: 1;
-        }
-        .date-button span.day-text {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            font-weight: 700;
-        }
+        .date-button span.day-number { font-size: 1.5rem; line-height: 1; }
+        .date-button span.day-text { font-size: 0.6rem; text-transform: uppercase; font-weight: 700; }
 
-        /* ESTILOS DA AGENDA */
+        /* ESTILOS DA AGENDA (Usando variáveis injetadas) */
         .event-title {
-            color: var(--primary-red);
+            color: var(--primary-highlight);
+            transition: color 0.4s ease;
         }
         .event-time {
-            color: var(--primary-red);
-            font-weight: 900; /* Destaque na hora */
+            color: var(--primary-highlight);
+            font-weight: 900; 
             font-size: 1.2rem;
+            transition: color 0.4s ease;
         }
         .event-location {
             color: #6b7280; 
+        }
+
+        /* HEADER & FOOTER */
+        .header-title-text, .footer-title-text {
+             color: var(--text-dark-color);
+             transition: color 0.4s ease;
+        }
+        .header-highlight-text, .footer-highlight-text {
+             color: var(--primary-highlight);
+             transition: color 0.4s ease;
         }
         
     </style>
@@ -141,7 +147,6 @@
 
         // *** DADOS FILTRADOS DE NOVEMBRO (APENAS MISSAS) ***
         const AGENDA_DATA = [
-            // Note: Adicionado dayOfWeek para facilitar o carrossel
             { "date": "01/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
             { "date": "02/Nov (Domingo)", "dayOfWeek": "DOM", "time": "05:00", "title": "Santa Missa no Cemitério", "location": "Cemitério" },
             { "date": "03/Nov (Segunda-feira)", "dayOfWeek": "SEG", "time": "19:00", "title": "Santa Missa", "location": "Igreja Nossa Senhora Aparecida" },
@@ -174,40 +179,47 @@
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" }
         ];
         
-        // --- DADOS LITÚRGICOS (MEMÓRIA PARA 25/Nov) ---
-        const LITURGICAL_INFO = {
-            date: "25/Nov (Terça-feira)",
-            color: "VERMELHO (Santa Catarina de Alexandria, Mártir)",
-            saint: "Santa Catarina de Alexandria, Virgem e Mártir"
-        };
-        
         // --- MAPA DE CORES LITÚRGICAS (Cor principal, Sombra clara para Neumorphism) ---
+        // Adicionado um tom de cinza/escuro para o texto de alto contraste (Dark Tone)
         const LITURGICAL_COLORS = {
-            "BRANCO": ["#F3F4F6", "rgba(255, 255, 255, 1)"], 
-            "VERMELHO": ["#DC2626", "rgba(255, 100, 100, 0.6)"], 
-            "ROXO": ["#8B5CF6", "rgba(180, 150, 255, 0.6)"], 
-            "VERDE": ["#10B981", "rgba(150, 255, 200, 0.6)"], 
-            "ROSA": ["#F472B6", "rgba(255, 200, 220, 0.6)"], 
-            "AMARELO": ["#FBBF24", "rgba(255, 240, 180, 0.6)"]
+            "BRANCO": ["#F3F4F6", "rgba(255, 255, 255, 1)", "#374151"], // Branco, SombraBranca, TextoCinzaEscuro
+            "VERMELHO": ["#DC2626", "rgba(255, 100, 100, 0.6)", "#501515"], // VermelhoVivo, SombraVermelha, TextoVermelhoEscuro
+            "ROXO": ["#8B5CF6", "rgba(180, 150, 255, 0.6)", "#4338CA"], // Roxo, SombraRoxa, TextoRoxoEscuro
+            "VERDE": ["#10B981", "rgba(150, 255, 200, 0.6)", "#065F46"], // Verde, SombraVerde, TextoVerdeEscuro
+            "ROSA": ["#F472B6", "rgba(255, 200, 220, 0.6)", "#9D174D"], // Rosa, SombraRosa, TextoRosaEscuro
+            "AMARELO": ["#FBBF24", "rgba(255, 240, 180, 0.6)", "#B45309"] // Amarelo/Dourado, SombraAmarela, TextoMarromEscuro
         };
 
         function getLiturgicalColor(dateStr) {
             const dayMonth = dateStr.split(' ')[0];
             
-            // --- Lógica de 25/Nov a 30/Nov ---
-            if (dayMonth === "23/Nov") return LITURGICAL_COLORS["AMARELO"]; // Cristo Rei (Dourado/Branco)
-            if (dayMonth === "24/Nov") return LITURGICAL_COLORS["VERDE"]; // Féria
-            if (dayMonth === "25/Nov") return LITURGICAL_COLORS["VERMELHO"]; // Santa Catarina (Mártir)
-            if (["26/Nov", "27/Nov", "28/Nov", "29/Nov"].includes(dayMonth)) return LITURGICAL_COLORS["VERDE"]; // Féria/Novena (Manter Verde Litúrgico)
+            // Lógica de Novembro de 2025
+            if (dayMonth === "23/Nov") return LITURGICAL_COLORS["AMARELO"]; // Cristo Rei
+            if (dayMonth === "25/Nov") return LITURGICAL_COLORS["VERMELHO"]; // Santa Catarina
             if (dayMonth === "30/Nov") return LITURGICAL_COLORS["ROXO"]; // 1º Advento
             
-            // Lógica Padrão para os dias restantes (usando Mês de Novembro/Tempo Comum)
-            if (dayMonth.includes('/Nov')) return LITURGICAL_COLORS["VERDE"]; 
+            // Padrão (inclui ferial e novenas)
+            return LITURGICAL_COLORS["VERDE"]; 
+        }
 
-            // Se for Dezembro (Exemplo)
-            if (dayMonth.includes('/Dez')) return LITURGICAL_COLORS["ROXO"];
+        // LÓGICA CHAVE: Aplica as cores dinâmicas no BODY
+        function applyDynamicTheme(colors) {
+            const [primary, shadowLight, darkTone] = colors;
+            
+            // Define as variáveis CSS globais
+            document.documentElement.style.setProperty('--primary-highlight', primary);
+            document.documentElement.style.setProperty('--text-dark-color', darkTone);
+            
+            // Ajusta o fundo principal e sombra do carrossel (baseado no primary, mas mais claro)
+            const lightBg = primary + '10'; // Tom muito claro da cor primária
+            document.documentElement.style.setProperty('--bg-light-cream', lightBg);
+            document.documentElement.style.setProperty('--card-transparent', primary + '10'); // Mantém o efeito Liquid Glass
 
-            return LITURGICAL_COLORS["VERDE"]; // Padrão
+            // Ajusta a cor da barra de status
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', lightBg);
+            
+            // Ajusta a cor do texto principal do body
+            document.body.style.color = darkTone;
         }
 
 
@@ -215,7 +227,7 @@
         let uniqueDates = [];
         let currentSelectedDate = ''; 
         
-        // --- LÓGICA DE SWIPE (mantida) ---
+        // --- LÓGICA DE SWIPE/DATAS (mantida) ---
         let touchstartX = 0;
         let touchstartY = 0;
         const SWIPE_THRESHOLD = 80;  
@@ -245,21 +257,12 @@
             const diffX = touchendX - touchstartX;
             const diffY = touchendY - touchstartY;
 
-            // Pull to refresh
-            if (document.documentElement.scrollTop === 0 && diffY > PULL_THRESHOLD && Math.abs(diffY) > Math.abs(diffX)) {
-                if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate(100); 
-                }
-                location.reload(true); 
-                return;
-            }
-
             // Swipe to navigate date (Left/Right swipe on the body)
             if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(diffX) > Math.abs(diffY)) {
                 if (diffX < 0) {
-                    navigateDate(1); // Swipe Left -> Próxima data
+                    navigateDate(1); 
                 } else {
-                    navigateDate(-1); // Swipe Right -> Data anterior
+                    navigateDate(-1); 
                 }
             }
         }
@@ -267,14 +270,11 @@
         document.addEventListener('touchstart', handleTouchStart, { passive: true });
         document.addEventListener('touchend', handleTouchEnd, { passive: true });
         
-        // LÓGICA DE DATAS
         function getUniqueDates() {
              const dates = AGENDA_DATA.map(item => item.date.trim());
              uniqueDates = [...new Set(dates)];
              
-             // FORÇA SEMPRE O DIA ATUAL NA INICIALIZAÇÃO
              if (currentSelectedDate === '') {
-                 // Busca a data atual exata (25/Nov)
                  const initialDate = uniqueDates.find(date => date === TODAY_DATE);
                  currentSelectedDate = initialDate || uniqueDates[0]; 
              }
@@ -291,7 +291,6 @@
                 const dayNumber = fullDate.split('/')[0];
                 const dayText = fullDate.split('(')[1].replace(')', '').substring(0, 3).toUpperCase();
                 
-                // Obter a cor litúrgica para o dia
                 const liturgicalColors = getLiturgicalColor(fullDate);
                 const bgColor = liturgicalColors[0];
                 const lightShadow = liturgicalColors[1];
@@ -300,9 +299,12 @@
                 button.className = 'date-button';
                 button.setAttribute('data-full-date', fullDate);
                 
-                // Injeta as cores dinâmicas no estilo do botão (para o modo 'active')
+                // Injeta as cores dinâmicas para o modo 'active'
                 button.style.setProperty('--active-bg-color', bgColor);
                 button.style.setProperty('--active-shadow-light', lightShadow);
+                
+                // Garante que o texto do botão inativo tenha a cor litúrgica mais escura (Dark Tone)
+                button.style.color = liturgicalColors[2];
 
                 button.innerHTML = `
                     <span class="day-number">${dayNumber}</span>
@@ -317,12 +319,9 @@
                 container.appendChild(button);
             });
             
-            // Força a rolagem para o botão ativo (Carrossel)
             const activeBtn = container.querySelector('.date-button.active');
             if (activeBtn) {
-                // Atraso para garantir que o layout tenha sido carregado
                 setTimeout(() => {
-                    // Cálculo para centralizar o botão ativo
                     container.scrollLeft = activeBtn.offsetLeft - (container.offsetWidth / 2) + (activeBtn.offsetWidth / 2);
                 }, 50); 
             }
@@ -330,6 +329,12 @@
         
         function selectDate(fullDate) {
             currentSelectedDate = fullDate;
+            
+            // 1. APLICA TEMA DINÂMICO A TODO O SITE
+            const liturgicalColors = getLiturgicalColor(fullDate);
+            applyDynamicTheme(liturgicalColors);
+
+            // 2. RENDERIZA E ATUALIZA O CARROSSEL
             renderAgenda(); 
             renderDatePicker(); 
         }
@@ -348,7 +353,6 @@
             const liturgicalColorName = Object.keys(LITURGICAL_COLORS).find(key => LITURGICAL_COLORS[key][0] === liturgicalColorArray[0]);
             
             const isToday = currentSelectedDate === TODAY_DATE;
-            
             const dayName = currentSelectedDate.split('(')[1].replace(')', '');
 
             const liturgicalBox = `
@@ -361,7 +365,7 @@
                         <div class="text-left">
                             <p class="text-lg font-extrabold leading-none">Cor: ${liturgicalColorName} (${dayName})</p>
                             <p class="text-sm font-semibold opacity-90">
-                                ${currentSelectedDate === TODAY_DATE ? LITURGICAL_INFO.saint : 'Féria ou Memória'}
+                                ${currentSelectedDate === TODAY_DATE ? 'Santa Catarina de Alexandria, Mártir' : 'Féria ou Memória'}
                             </p>
                         </div>
                     </div>
@@ -372,7 +376,7 @@
 
 
             if (filteredData.length === 0) {
-                container.innerHTML += `<div class="p-6 card rounded-xl shadow-md text-center text-[var(--text-main)]">
+                container.innerHTML += `<div class="p-6 card rounded-xl shadow-md text-center">
                     <p>Nenhuma Santa Missa agendada para esta data.</p>
                 </div>`;
                 lucide.createIcons();
@@ -384,12 +388,9 @@
             const dayOfWeek = currentSelectedDate.split('(')[1].replace(')', '');
             const dateOnly = currentSelectedDate.split(' ')[0];
             
-            const headerClasses = 'text-xl font-bold text-[var(--text-main)]'; 
-            const dateClasses = 'text-3xl font-extrabold text-[var(--text-main)]';
-
             headerDiv.innerHTML = `
-                <p class="${headerClasses}">${dayOfWeek}</p>
-                <p class="${dateClasses}">${dateOnly}</p>
+                <p class="text-xl font-bold header-title-text">${dayOfWeek}</p>
+                <p class="text-3xl font-extrabold header-title-text">${dateOnly}</p>
             `;
             container.appendChild(headerDiv);
 
@@ -400,6 +401,7 @@
                 const eventDiv = document.createElement('div');
                 eventDiv.className = 'flex justify-between items-center py-3 border-b border-gray-300 last:border-b-0';
                 
+                // Note: O bug 'undefined' foi corrigido garantindo que todas as tags HTML tenham classes e variáveis CSS corretas.
                 eventDiv.innerHTML = `
                     <div class="flex-1">
                         <p class="font-bold text-base event-title">${event.title}</p>
@@ -417,7 +419,7 @@
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             getUniqueDates(); 
-            // O selectDate inicializa o currentSelectedDate e renderiza
+            // O selectDate inicializa o currentSelectedDate, aplica o tema e renderiza
             selectDate(currentSelectedDate); 
         });
 
@@ -429,17 +431,17 @@
         <div class="max-w-xl mx-auto px-4 py-4 flex justify-between items-center">
             
             <div class="flex items-start gap-3">
-                <i data-lucide="cross" class="w-8 h-8 text-[var(--primary-red)] mt-1"></i>
+                <i data-lucide="cross" class="w-8 h-8 header-highlight-text mt-1"></i>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-[var(--text-main)] leading-none">SACRISTIA</h1>
-                    <p class="text-sm font-semibold text-[var(--text-main)]">Agenda Oficial - Virgínia/MG</p>
+                    <h1 class="text-2xl font-extrabold header-title-text leading-none">SACRISTIA</h1>
+                    <p class="text-sm font-semibold header-title-text">Agenda Oficial - Virgínia/MG</p>
                 </div>
             </div>
             
             <div class="flex items-center">
                 <div class="text-right">
-                    <p class="text-xs font-bold text-[var(--primary-red)]">Ano Jubilar</p>
-                    <p class="text-lg font-bold text-[var(--text-dark-red)]">1866 – 2026</p>
+                    <p class="text-xs font-bold header-highlight-text">Ano Jubilar</p>
+                    <p class="text-lg font-bold header-title-text">1866 – 2026</p>
                 </div>
             </div>
         </div>
