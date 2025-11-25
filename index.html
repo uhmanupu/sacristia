@@ -150,41 +150,46 @@
     </style>
 
     <script>
-        // Data atual para inicialização
+        // Data atual para inicialização (usada como ponto de partida)
         const TODAY_DATE = "25/Nov (Terça-feira)";
 
-        // *** DADOS FILTRADOS DE NOVEMBRO (APENAS MISSAS) ***
+        // *** DADOS FILTRADOS DE NOVEMBRO (APENAS MISSAS) COM PADRE CELEBRANTE ***
         const AGENDA_DATA = [
-            { "date": "01/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa (Véspera de Finados)", "location": "Igreja Matriz" },
-            { "date": "02/Nov (Domingo)", "dayOfWeek": "DOM", "time": "05:00", "title": "Santa Missa no Cemitério (Finados)", "location": "Cemitério" },
-            { "date": "03/Nov (Segunda-feira)", "dayOfWeek": "SEG", "time": "19:00", "title": "Santa Missa", "location": "Igreja Nossa Senhora Aparecida" },
-            { "date": "04/Nov (Terça-feira)", "dayOfWeek": "TER", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Morangal" },
-            { "date": "05/Nov (Quarta-feira)", "dayOfWeek": "QUA", "time": "19:00", "title": "Santa Missa Setor 7", "location": "Bairro Serra Verde" },
-            { "date": "06/Nov (Quinta-feira)", "dayOfWeek": "QUI", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "07/Nov (Sexta-feira)", "dayOfWeek": "SEX", "time": "09:00", "title": "Santa Missa", "location": "Abrigo São Camilo" },
-            { "date": "08/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "09/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "10/Nov (Segunda-feira)", "dayOfWeek": "SEG", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Pouso Frio" },
-            { "date": "11/Nov (Terça-feira)", "dayOfWeek": "TER", "time": "19:00", "title": "Santa Missa Setor 2", "location": "Bairro Ribeirão" },
-            { "date": "12/Nov (Quarta-feira)", "dayOfWeek": "QUA", "time": "09:00", "title": "Santa Missa", "location": "Abrigo São Camilo" },
-            { "date": "13/Nov (Quinta-feira)", "dayOfWeek": "QUI", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "14/Nov (Sexta-feira)", "dayOfWeek": "SEX", "time": "19:00", "title": "Santa Missa Setor 4", "location": "Bairro Mato Dentro" },
-            { "date": "15/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "16/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "17/Nov (Segunda-feira)", "dayOfWeek": "SEG", "time": "19:00", "title": "Santa Missa Setor 9", "location": "Sertãozinho" },
-            { "date": "18/Nov (Terça-feira)", "dayOfWeek": "TER", "time": "09:00", "title": "Santa Missa", "location": "Abrigo São Camilo" },
-            { "date": "19/Nov (Quarta-feira)", "dayOfWeek": "QUA", "time": "19:00", "title": "Santa Missa Setor 5", "location": "Bairro Marques" },
-            { "date": "20/Nov (Quinta-feira)", "dayOfWeek": "QUI", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "21/Nov (Sexta-feira)", "dayOfWeek": "SEX", "time": "19:00", "title": "Santa Missa Setor 6", "location": "Bairro Torres" },
-            { "date": "22/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa (Cristo Rei)", "location": "Igreja Matriz" },
-            { "date": "24/Nov (Segunda-feira)", "dayOfWeek": "SEG", "time": "18:00", "title": "Santa Missa", "location": "Igreja Sagrado Coração" }, 
-            { "date": "25/Nov (Terça-feira)", "dayOfWeek": "TER", "time": "19:00", "title": "Santa Missa Setor 4", "location": "Bairro Pereiras" },
-            { "date": "26/Nov (Quarta-feira)", "dayOfWeek": "QUA", "time": "19:00", "title": "Santa Missa Setor 1", "location": "Bairro Mendes" },
-            { "date": "27/Nov (Quinta-feira)", "dayOfWeek": "QUI", "time": "05:00", "title": "Santa Missa Pedra Santa", "location": "Pedra Santa" },
-            { "date": "28/Nov (Sexta-feira)", "dayOfWeek": "SEX", "time": "19:00", "title": "Primeiro dia da Novena", "location": "Novena" },
-            { "date": "29/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
-            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz" }
+            // 23 - Domingo (Cristo Rei)
+            { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
+            { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:00", "title": "Santa Missa", "location": "Setor 3 – Bairro Mendanha (Pe. Erick)" },
+            { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Retirinho (Pe. Edimilson)" },
+            { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Erick)" },
+            
+            // 24 - Segunda-feira
+            { "date": "24/Nov (Segunda-feira)", "dayOfWeek": "SEG", "time": "18:00", "title": "Santa Missa", "location": "Igreja Sagrado Coração (Pe. Erick)" },
+            
+            // 25 - Terça-feira
+            { "date": "25/Nov (Terça-feira)", "dayOfWeek": "TER", "time": "19:00", "title": "Santa Missa", "location": "Setor 4 – Bairro Pereiras (Pe. Edimilson)" },
+            { "date": "25/Nov (Terça-feira)", "dayOfWeek": "TER", "time": "20:00", "title": "Santa Missa", "location": "Setor 7 – Bairro Rio Acima II (Pe. Erick)" },
+            
+            // 26 - Quarta-feira
+            { "date": "26/Nov (Quarta-feira)", "dayOfWeek": "QUA", "time": "19:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Mendes (Pe. Edimilson)" },
+            { "date": "26/Nov (Quarta-feira)", "dayOfWeek": "QUA", "time": "19:00", "title": "Santa Missa", "location": "Setor 4 – Bairro Água Limpa (Pe. Erick)" },
+            
+            // 27 - Quinta-feira (Dedicação Basílicas)
+            { "date": "27/Nov (Quinta-feira)", "dayOfWeek": "QUI", "time": "05:00", "title": "Santa Missa", "location": "Pedra Santa (Pe. Erick)" },
+            { "date": "27/Nov (Quinta-feira)", "dayOfWeek": "QUI", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
+            { "date": "27/Nov (Quinta-feira)", "dayOfWeek": "QUI", "time": "19:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Muquém (Pe. Erick)" },
+            
+            // 28 - Sexta-feira
+            { "date": "28/Nov (Sexta-feira)", "dayOfWeek": "SEX", "time": "19:00", "title": "Santa Missa", "location": "Setor 7 – Bairro Vargem Alegre (Pe. Edimilson)" },
+            
+            // 29 - Sábado (Santa Isabel da Trindade / Nossa Senhora)
+            { "date": "29/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "10:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Virgem do Socorro (Pe. Erick)" },
+            { "date": "29/Nov (Sábado)", "dayOfWeek": "SÁB", "time": "19:00", "title": "Santa Missa", "location": "Setor 7 – Bairro Roseirinha (Pe. Edimilson)" },
+            
+            // 30 - Domingo (Santo André)
+            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Erick)" },
+            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
+            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:30", "title": "Santa Missa", "location": "Setor 7 – Bairro Retiro dos Marins (Pe. Erick)" },
+            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "11:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Palmeiras (Pe. Erick)" },
+            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 5 – Bairro Roseira (Pe. Edimilson)" }
         ];
         
         // --- DADOS LITÚRGICOS COMPLETOS (COR E SANTO/FESTA) ---
@@ -444,7 +449,7 @@
                 eventDiv.innerHTML = `
                     <div class="flex-1">
                         <p class="font-bold text-base event-title">${event.title}</p>
-                        <p class="text-xs event-location">${event.location}</p>
+                        <p class="text-xs font-bold event-location">${event.location}</p>
                     </div>
                     <span class="font-bold text-lg event-time mr-4">${event.time}</span>
                 `;
