@@ -231,10 +231,10 @@
             agendaData.forEach(task => {
                 localTaskState[task.id] = {
                     concluido: false,
-                    preparacao: SUB_TASKS_OUTRA_MISSA.reduce((acc, sub) => {
+                    preparacao: task.location === 'Outra' ? SUB_TASKS_OUTRA_MISSA.reduce((acc, sub) => {
                         acc[sub.key] = false;
                         return acc;
-                    }, {})
+                    }, {}) : {}
                 };
             });
 
@@ -379,7 +379,8 @@
 
                     // Tag de Hora
                     const timeTagEl = document.createElement('span');
-                    timeTagEl.className = `time-tag mr-4 px-3 py-1 text-sm font-bold rounded-full ${isFullyPrepared || ((isMissaMatriz || isService) && isCompleted) ? 'bg-green-600' : 'bg-indigo-700'} text-white shadow-md`;
+                    const timeTagColor = isFullyPrepared || ((isMissaMatriz || isService) && isCompleted) ? 'bg-green-600' : 'bg-indigo-700';
+                    timeTagEl.className = `time-tag mr-4 px-3 py-1 text-sm font-bold rounded-full ${timeTagColor} text-white shadow-md`;
                     timeTagEl.textContent = task.hora;
                     
                     // Detalhes da Tarefa
@@ -396,7 +397,6 @@
 
                     // --- Lógica de Ícones e Botões ---
                     if (isMissaExterna) {
-                        // Ícone de expansão/contração para Missas Externas
                         const expandIcon = isExpanded 
                             ? '<path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />' 
                             : '<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />';
@@ -404,7 +404,6 @@
                         taskEl.innerHTML += `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 ml-4 transition duration-300 ${isFullyPrepared ? 'text-white' : 'text-white/70'}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">${expandIcon}</svg>`;
                         
                     } else {
-                        // Botão de check para Missas Matriz e Serviços
                         const completionButton = document.createElement('button');
                         completionButton.className = `p-1 rounded-full border-2 transition duration-300 ml-4 ${isCompleted ? 'bg-green-500 border-green-500' : 'bg-transparent border-white/50 hover:border-green-300'}`;
                         completionButton.onclick = (e) => {
@@ -441,7 +440,8 @@
                                     }
                                 </svg>
                             `;
-                            subTasksEl.appendChild(subTaskItem);
+                            // CORREÇÃO: Anexa o item à lista desdobrável
+                            subTasksEl.appendChild(subTaskItem); 
                         });
                         
                         taskContainerEl.appendChild(subTasksEl);
