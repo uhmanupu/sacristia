@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Paroquial Liquid Glass (Sem Persistência)</title>
+    <title>Agenda Paroquial Liquid Glass (Com Persistência Local)</title>
     <!-- Carrega Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -119,10 +119,10 @@
     <!-- Principal Conteúdo Liquid Glass --><div id="app-container" class="glass-card w-full max-w-4xl p-6 md:p-10 my-8">
         
         <h1 class="text-4xl font-bold text-white mb-2 text-shadow-lg">Agenda Paroquial (Liturgia)</h1>
-        <p class="text-white/80 mb-6 italic">Modo sem persistência de dados. O progresso será perdido ao recarregar a página.</p>
+        <p class="text-white/80 mb-6 italic">Modo com persistência LOCAL. O progresso será mantido neste navegador.</p>
 
         <!-- Informação do Usuário --><div id="auth-info" class="text-sm text-white/70 mb-4 flex justify-between items-center">
-            <span id="user-id-display">Status: Carregado Localmente (Sem Persistência)</span>
+            <span id="user-id-display">Status: Carregado e Salvando Localmente</span>
             <div id="loading-indicator" class="hidden flex items-center text-white">
                 <div class="loading-spinner border-4 rounded-full w-5 h-5 mr-2"></div>
                 Salvando...
@@ -133,11 +133,12 @@
             <!-- As tarefas serão inseridas aqui pelo JavaScript --></div>
     </div>
 
-    <!-- Script principal (SEM FIREBASE) --><script>
+    <!-- Script principal (COM PERSISTÊNCIA LOCAL) --><script>
         
         // =========================================================================
-        // ESTADO LOCAL (Substitui o Firebase e o Firestore)
+        // ESTADO LOCAL E CHAVE DE ARMAZENAMENTO
         // =========================================================================
+        const STORAGE_KEY = 'agendaParoquialState';
         let localTaskState = {};
         let expandedTasks = {};
 
@@ -202,9 +203,31 @@
         // --- Funções de Utilidade ---
         
         /**
-         * Inicializa o estado local para todas as tarefas.
+         * Salva o estado atual das tarefas no localStorage.
+         */
+        function saveLocalState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(localTaskState));
+            } catch (e) {
+                console.error("Erro ao salvar o estado no localStorage", e);
+            }
+        }
+
+        /**
+         * Inicializa o estado local, tentando carregar do localStorage.
          */
         function initializeLocalState() {
+            let loadedState = null;
+            try {
+                const storedData = localStorage.getItem(STORAGE_KEY);
+                if (storedData) {
+                    loadedState = JSON.parse(storedData);
+                }
+            } catch (e) {
+                console.error("Erro ao carregar o estado do localStorage", e);
+            }
+
+            // 1. Inicializa o estado padrão (para novas tarefas ou se nada foi salvo)
             agendaData.forEach(task => {
                 localTaskState[task.id] = {
                     concluido: false,
@@ -214,6 +237,22 @@
                     }, {})
                 };
             });
+
+            // 2. Mescla com o estado carregado (mantendo checks anteriores)
+            if (loadedState) {
+                Object.keys(loadedState).forEach(taskId => {
+                    if (localTaskState[taskId]) {
+                        localTaskState[taskId].concluido = loadedState[taskId].concluido || false;
+                        if (loadedState[taskId].preparacao) {
+                            localTaskState[taskId].preparacao = {
+                                ...localTaskState[taskId].preparacao, // Garante que a estrutura base exista
+                                ...loadedState[taskId].preparacao
+                            };
+                        }
+                    }
+                });
+            }
+            
             renderTasks();
         }
         
@@ -237,6 +276,9 @@
 
             localTaskState[taskId].concluido = !localTaskState[taskId].concluido;
             
+            // SALVAMENTO AUTOMÁTICO
+            saveLocalState();
+
             // Simulação de delay para feedback visual
             setTimeout(() => {
                 loadingIndicatorEl.classList.add('hidden');
@@ -254,6 +296,9 @@
             const currentState = localTaskState[taskId].preparacao[subKey] || false;
             localTaskState[taskId].preparacao[subKey] = !currentState;
             
+            // SALVAMENTO AUTOMÁTICO
+            saveLocalState();
+
             // Simulação de delay para feedback visual
             setTimeout(() => {
                 loadingIndicatorEl.classList.add('hidden');
