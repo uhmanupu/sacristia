@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Paroquial Liquid Glass (Sem Salvamento)</title>
+    <title>Agenda Paroquial Liquid Glass (Sem Persistência)</title>
     <!-- Carrega Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -118,11 +118,11 @@
 
     <!-- Principal Conteúdo Liquid Glass --><div id="app-container" class="glass-card w-full max-w-4xl p-6 md:p-10 my-8">
         
-        <h1 class="text-4xl font-bold text-white mb-2 text-shadow-lg">Agenda Paroquial (Sem Salvamento)</h1>
+        <h1 class="text-4xl font-bold text-white mb-2 text-shadow-lg">Agenda Paroquial (Liturgia)</h1>
         <p class="text-white/80 mb-6 italic">Modo sem persistência de dados. O progresso será perdido ao recarregar a página.</p>
 
         <!-- Informação do Usuário --><div id="auth-info" class="text-sm text-white/70 mb-4 flex justify-between items-center">
-            <span id="user-id-display">Status: Carregado localmente</span>
+            <span id="user-id-display">Status: Carregado Localmente (Sem Persistência)</span>
             <div id="loading-indicator" class="hidden flex items-center text-white">
                 <div class="loading-spinner border-4 rounded-full w-5 h-5 mr-2"></div>
                 Salvando...
@@ -131,10 +131,9 @@
 
         <!-- Lista de Tarefas --><div id="task-list" class="space-y-3">
             <!-- As tarefas serão inseridas aqui pelo JavaScript --></div>
-
     </div>
 
-    <!-- Script principal --><script>
+    <!-- Script principal (SEM FIREBASE) --><script>
         
         // =========================================================================
         // ESTADO LOCAL (Substitui o Firebase e o Firestore)
@@ -192,6 +191,13 @@
 
         // Elementos DOM
         const taskListEl = document.getElementById('task-list');
+        const userIdDisplayEl = document.getElementById('user-id-display');
+        const loadingIndicatorEl = document.getElementById('loading-indicator');
+        
+        // Oculta a mensagem de erro que não será usada
+        const messageBoxEl = document.getElementById('message-box');
+        if (messageBoxEl) messageBoxEl.remove();
+
 
         // --- Funções de Utilidade ---
         
@@ -208,12 +214,11 @@
                     }, {})
                 };
             });
+            renderTasks();
         }
         
         /**
          * Função para verificar se todos os preparativos estão completos.
-         * @param {object} task - O objeto da tarefa.
-         * @param {object} preparacaoData - Os dados de preparo.
          */
         function areSubTasksComplete(task, preparacaoData) {
             if (task.type !== 'Missa' || task.location !== 'Outra') return false;
@@ -225,35 +230,39 @@
         
         /**
          * Alterna o estado de conclusão da tarefa principal.
-         * @param {string} taskId - O ID único da tarefa.
          */
         function toggleMainCompletion(taskId) {
             if (!localTaskState[taskId]) return;
+            loadingIndicatorEl.classList.remove('hidden');
 
             localTaskState[taskId].concluido = !localTaskState[taskId].concluido;
             
-            // Redesenha após a alteração de estado local
-            renderTasks();
+            // Simulação de delay para feedback visual
+            setTimeout(() => {
+                loadingIndicatorEl.classList.add('hidden');
+                renderTasks();
+            }, 100);
         }
 
         /**
          * Alterna o estado de conclusão de uma sub-tarefa.
-         * @param {string} taskId - O ID único da tarefa principal.
-         * @param {string} subKey - A chave da sub-tarefa.
          */
         function toggleSubTask(taskId, subKey) {
             if (!localTaskState[taskId] || !localTaskState[taskId].preparacao) return;
+            loadingIndicatorEl.classList.remove('hidden');
 
             const currentState = localTaskState[taskId].preparacao[subKey] || false;
             localTaskState[taskId].preparacao[subKey] = !currentState;
             
-            // Redesenha após a alteração de estado local
-            renderTasks();
+            // Simulação de delay para feedback visual
+            setTimeout(() => {
+                loadingIndicatorEl.classList.add('hidden');
+                renderTasks();
+            }, 100);
         }
         
         /**
          * Alterna o estado de expansão/contração de uma Missa Externa.
-         * @param {string} taskId - O ID único da tarefa.
          */
         function toggleExpansion(taskId) {
             expandedTasks[taskId] = !expandedTasks[taskId];
@@ -281,7 +290,9 @@
                 taskListEl.appendChild(dayTitleEl);
 
                 tasksByDay[day].forEach(task => {
-                    const taskData = localTaskState[task.id] || { concluido: false, preparacao: {} };
+                    // USA O ESTADO LOCAL
+                    const taskData = localTaskState[task.id] || { concluido: false, preparacao: {} }; 
+                    
                     const isCompleted = taskData.concluido;
                     const isMissaExterna = task.type === 'Missa' && task.location === 'Outra';
                     const isMissaMatriz = task.type === 'Missa' && task.location === 'Matriz';
@@ -398,7 +409,6 @@
 
         // Inicia a aplicação
         window.onload = initializeLocalState;
-        window.onload = renderTasks;
     </script>
 </body>
 </html>
