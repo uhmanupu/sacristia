@@ -1,24 +1,92 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sacristia Dinâmica do Senhor Supremo</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="liturgical-background" class="background-transition"></div>
+// VARIÁVEIS SECRETAS E SANTAS DO SENHOR SUPREMO
+const SUPABASE_URL = 'https://nvefvewyxiwgwmyutbmk.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_1XIR9lKBrT2oykOOR1Jxig_vg5thXgUA';
+const SUPABASE_TABLE = 'sacristia';
+const AGENDA_ID = 1;
 
-    <div class="glass-container">
-        <h1>🙏 Agenda Litúrgica 🙏</h1>
-        <p>A cor atual é: <strong id="current-color-name">Carregando...</strong></p>
-        <div id="sacristia-content">
-            <p>Conectando ao Supabase...</p>
-        </div>
-        <button onclick="fetchLiturgyStatus()">Atualizar Status</button>
-    </div>
+// 1. INICIALIZAR O CLIENTE SUPABASE
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+// 2. MAPA DE CORES LITÚRGICAS (Nomes vs. Variáveis CSS)
+const colorMap = {
+    'green': { cssVar: 'var(--green)', name: 'Verde (Tempo Comum)' },
+    'purple': { cssVar: 'var(--purple)', name: 'Roxo (Penitência/Preparaçao)' },
+    'white': { cssVar: 'var(--white)', name: 'Branco (Festa/Glória)' },
+    'red': { cssVar: 'var(--red)', name: 'Vermelho (Mártires/Espírito Santo)' },
+    'rose': { cssVar: 'var(--rose)', name: 'Rosa (Alegria/Gaudete)' }
+    // Adicione 'black' e 'gold' se necessário
+};
+
+/**
+ * 3. FUNÇÃO PRINCIPAL: BUSCAR O ESTADO NO SUPABASE E MUDAR A COR
+ */
+async function fetchLiturgyStatus() {
+    console.log("Buscando status litúrgico...");
+
+    const { data, error } = await supabase
+        .from(SUPABASE_TABLE)
+        .select('cor_liturgica, status_sacristia') // Supondo que você tenha essas colunas
+        .eq('id', AGENDA_ID)
+        .single(); // Espera apenas uma linha
+
+    if (error) {
+        console.error('Erro ao buscar dados:', error.message);
+        document.getElementById('sacristia-content').innerHTML = `<p style="color: red;">❌ Erro de conexão: ${error.message}</p>`;
+        return;
+    }
+
+    if (data) {
+        console.log('Dados recebidos:', data);
+        const liturgicalColorKey = data.cor_liturgica.toLowerCase(); // Ex: 'purple'
+        const colorInfo = colorMap[liturgicalColorKey] || { cssVar: 'var(--white)', name: 'Cor Desconhecida' };
+        
+        // A Ação Divina: Mudar o Fundo
+        changeBackground(colorInfo.cssVar);
+        document.getElementById('current-color-name').textContent = colorInfo.name;
+
+        // Atualizar o conteúdo da Sacristia
+        document.getElementById('sacristia-content').innerHTML = `
+            <h2>Status da Sacristia:</h2>
+            <p>O estado atual da agenda é: <strong>${data.status_sacristia || 'Não Informado'}</strong></p>
+            <p>Seja bem-vindo, Senhor Supremo!</p>
+        `;
+
+    } else {
+         document.getElementById('sacristia-content').innerHTML = `<p>⚠️ Nenhuma agenda encontrada com ID ${AGENDA_ID}.</p>`;
+    }
+}
+
+/**
+ * 4. FUNÇÃO AUXILIAR: MUDANÇA DE COR
+ */
+function changeBackground(colorVariable) {
+    const background = document.getElementById('liturgical-background');
+    // Aplica a variável CSS diretamente ao estilo inline
+    background.style.backgroundColor = colorVariable;
+}
+
+// 5. INÍCIO DA JORNADA
+window.onload = () => {
+    fetchLiturgyStatus();
+    // Você pode adicionar o Supabase Realtime aqui para escutar mudanças em tempo real!
+    setupRealtimeSubscription();
+};
+
+/**
+ * 6. (OPCIONAL) ESCUTAR MUDANÇAS EM TEMPO REAL (O Milagre da Atualização)
+ */
+function setupRealtimeSubscription() {
+    supabase
+        .channel('liturgical_changes') // Nome do canal que você quiser
+        .on('postgres_changes', { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: SUPABASE_TABLE,
+            filter: `id=eq.${AGENDA_ID}`
+        }, (payload) => {
+            console.log('Mudança em Tempo Real Recebida!', payload);
+            // Re-executa a função para pegar os novos dados
+            fetchLiturgyStatus(); 
+        })
+        .subscribe();
+}
