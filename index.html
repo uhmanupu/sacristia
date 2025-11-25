@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sacristia - Agenda Oficial</title>
-    <meta name="theme-color" content="#fffdf0">
+    <meta name="theme-color" content="#FBEBEB">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Sacristia">
@@ -20,51 +20,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         /* ================================================= */
-        /* DEFINIÇÕES DE CORES LIQUID GLASS - TEMA VERMELHO (Litúrgico) */
+        /* DEFINIÇÕES DE CORES LIQUID GLASS - TEMA VERMELHO FIXO */
         /* ================================================= */
         :root {
-            /* Fundo principal - Vermelho Litúrgico Suave (Light Glass) */
+            /* Fundo principal (Light Glass) */
             --bg-light-cream: #FBEBEB; 
-            /* Fundo principal Dark Mode - Vermelho Litúrgico Profundo (Dark Glass) */
-            --text-dark-blue: #401010; 
+            /* Vermelho Bordô Escuro */
+            --text-dark-red: #501515; 
             
-            /* Destaques (Amarelo/Dourado - Cor Litúrgica de Destaque no Dark Mode) */
-            --primary-amber: #fcd34d; 
-            /* Destaque principal no Light Mode (Vermelho Vivo) */
-            --primary-dark-amber: #DC2626; 
+            /* Destaque principal (Vermelho Vivo) */
+            --primary-red: #DC2626; 
+            /* Destaque secundário (Amarelo Dourado - Usado para Ícones/Contraste) */
+            --secondary-amber: #fcd34d; 
             
-            /* Card Light (Alta opacidade, blur suave) */
-            --card-light-transparent: rgba(255, 255, 255, 0.85); 
-            /* Card Dark (Opacidade ajustada, blur forte) */
-            --card-dark-transparent: rgba(64, 16, 16, 0.7); /* Vermelho escuro mais transparente */
-
+            /* Card Transparente (Vidro Claro) */
+            --card-transparent: rgba(255, 255, 255, 0.85); 
             /* Texto principal */
-            --text-light-mode: #501515; /* Vermelho escuro para texto principal do Light Mode */
-            --text-dark-mode: #FEEEEE; /* Vermelho claro para texto principal do Dark Mode */
-
-            /* Tons de cinza para hierarquia de texto */
-            --text-light-secondary: #DC2626; 
-            --text-dark-secondary: #fca5a5; 
-            
-            /* CORES ESPECÍFICAS PARA DESTAQUE DO SANTO E COR DO DIA (VERMELHO) */
-            --liturgical-red-highlight: #DC2626; /* Red 600 */
-            --liturgical-red-dark: #401010; 
-            --liturgical-text-light: #fff;
+            --text-main: #501515; 
+            /* Cor Litúrgica de Destaque */
+            --liturgical-color: #DC2626; 
+            /* Cor de fundo para botões inativos */
+            --button-inactive-bg: #fef2f2; 
         }
         
-        /* TEMA BASE (LIGHT VISUAL - Fundo Vermelho Claro) */
+        /* TEMA BASE (FIXO NO LIGHT VISUAL) */
         body { 
             font-family: 'Merriweather', serif;
             background-color: var(--bg-light-cream); 
-            color: var(--text-light-mode); 
-            transition: background-color 0.3s, color 0.3s; 
+            color: var(--text-main); 
+            transition: none; /* Remove transitions de tema */
         }
 
         /* ---------------------------------------------------- */
-        /* EFEITO LIQUID GLASS - LIGHT VISUAL (FUNDO CLARO) */
+        /* EFEITO LIQUID GLASS - VISUAL CLARO */
         /* ---------------------------------------------------- */
         .card { 
-            background-color: var(--card-light-transparent); 
+            background-color: var(--card-transparent); 
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px); 
             border: 1px solid rgba(255, 255, 255, 0.7); 
@@ -73,95 +64,66 @@
             border-radius: 1rem; 
         }
         .header-bg { 
-            background-color: var(--card-light-transparent); 
+            background-color: var(--card-transparent); 
             backdrop-filter: blur(10px); 
             -webkit-backdrop-filter: blur(10px); 
             border-color: rgba(64, 16, 16, 0.1); 
             box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15); 
         }
-        .date-button.active { 
-            background-color: var(--primary-dark-amber); /* Ativo em Light Mode (Vermelho Vivo) */
-            color: white; 
+
+        /* Destaque Litúrgico do Dia */
+        #liturgical-info {
+            background-color: var(--liturgical-color); 
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
         }
-        
-        /* ---------------------------------------------------- */
-        /* EFEITO LIQUID GLASS - DARK VISUAL (FUNDO ESCURO) */
-        /* ---------------------------------------------------- */
-        body.light-mode { 
-            background-color: var(--liturgical-red-dark); 
-            color: var(--text-dark-mode); 
-        }
-        .light-mode .card,
-        .light-mode .header-bg {
-            background-color: var(--card-dark-transparent); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5); 
-        }
-        /* Ajuste no Fundo da Notícia/Hino para usar a nova base escura transparente */
-        .hino-content-bg { 
-            background-color: rgba(64, 16, 16, 0.6); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+        .liturgical-icon {
+            color: var(--secondary-amber); /* Amarelo no destaque Vermelho */
         }
 
-        /* ELEMENTOS GERAIS */
-        .date-picker-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .date-picker-scroll::-webkit-scrollbar { display: none; }
+        /* Estilo para a Barra de Dias (Carrossel) */
+        .date-picker-scroll { 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            -webkit-overflow-scrolling: touch; 
+            /* Garante que o carrossel apareça sempre */
+            scrollbar-width: none; /* Firefox */
+        }
+        .date-picker-scroll::-webkit-scrollbar { 
+            display: none; /* Chrome, Safari, Opera */
+        }
+        
         .date-button { 
             padding: 8px 16px; 
             margin-right: 8px; 
             border-radius: 9999px; 
             font-weight: 700; 
             border: 2px solid transparent; 
-            background-color: #fef2f2; 
-            color: var(--primary-dark-amber);
+            background-color: var(--button-inactive-bg); 
+            color: var(--primary-red);
+            transition: background-color 0.2s, color 0.2s;
         }
         
-        .light-mode .date-button { 
-            background-color: #334155; 
-            color: var(--text-dark-mode); 
-        }
-        .light-mode .date-button.active { 
-            background-color: var(--primary-amber); 
-            color: var(--liturgical-red-dark); 
-        }
-        .date-button:not(.active) {
-            background-color: #fef2f2; 
-            color: var(--primary-dark-amber); 
+        .date-button.active { 
+            background-color: var(--primary-red); 
+            color: white; 
         }
 
-        /* Destaque Litúrgico do Dia */
-        #liturgical-info {
-            background-color: var(--liturgical-red-highlight); 
-            color: var(--liturgical-text-light);
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        /* Estilos da Agenda */
+        .event-title {
+            color: var(--primary-red);
         }
-        .light-mode #liturgical-info {
-            background-color: var(--liturgical-red-dark); 
-            color: var(--text-dark-mode);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        .event-time {
+            color: var(--primary-red);
         }
-        .liturgical-icon {
-            color: var(--primary-amber); 
-        }
-
-        /* Estilos de layout móvel (manter) */
-        @media (max-width: 640px) { 
-            #desktop-tab-bar { 
-                display: none; 
-            }
-        }
-        @media (min-width: 641px) { 
-            #mobile-menu-button { 
-                display: none; 
-            }
+        .event-location {
+            color: #6b7280; /* Gray 500 */
         }
         
     </style>
 
     <script>
-        // *** DADOS CONSOLIDADOS DE NOVEMBRO (AGENDA COMPLETA) ***
+        // *** DADOS FILTRADOS DE NOVEMBRO (APENAS MISSAS) ***
         const AGENDA_DATA = [
             { "date": "01/Nov (Sábado)", "time": "16:00", "title": "Santa Missa", "location": "Igreja Matriz" },
             { "date": "01/Nov (Sábado)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" },
@@ -241,7 +203,7 @@
             { "date": "30/Nov (Domingo)", "time": "19:00", "title": "Santa Missa", "location": "Igreja Matriz" }
         ];
         
-        // --- DADOS LITÚRGICOS (DO DIA) ---
+        // --- DADOS LITÚRGICOS (DO DIA: 25/Nov) ---
         const LITURGICAL_INFO = {
             date: "25/Nov (Terça-feira)",
             color: "VERMELHO (Santa Catarina de Alexandria, Mártir)",
@@ -253,7 +215,7 @@
         let uniqueDates = [];
         let currentSelectedDate = ''; 
         
-        // --- LÓGICA GERAL ---
+        // --- LÓGICA GERAL E SWIPE ---
         let touchstartX = 0;
         let touchstartY = 0;
         const SWIPE_THRESHOLD = 80;  
@@ -292,62 +254,23 @@
                 return;
             }
 
-            // Swipe to navigate date
+            // Swipe to navigate date (Left/Right swipe on the body)
             if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(diffX) > Math.abs(diffY)) {
                 if (diffX < 0) {
-                    navigateDate(-1); 
+                    navigateDate(1); // Swipe Left -> Próxima data (1)
                 } else {
-                    navigateDate(1); 
+                    navigateDate(-1); // Swipe Right -> Data anterior (-1)
                 }
             }
         }
 
         document.addEventListener('touchstart', handleTouchStart, { passive: true });
         document.addEventListener('touchend', handleTouchEnd, { passive: true });
-
-        let currentTheme = localStorage.getItem('theme') || 'dark'; 
-
-        // LÓGICA DE TEMA
-        function applyTheme(theme) {
-            const body = document.body;
-            const themeToggleBtn = document.getElementById('theme-toggle');
-            const metaTheme = document.querySelector('meta[name="theme-color"]');
-            
-            // SE TEMA É 'DARK' (VARIÁVEL) -> APLICAR VISUAL CLARO (Vermelho Claro/Vermelho Vivo)
-            if (theme === 'dark') {
-                body.classList.remove('light-mode'); 
-                if (themeToggleBtn) {
-                    // Mostrar Lua (Sugere ir para o modo ESCURO)
-                    themeToggleBtn.innerHTML = `<i data-lucide="moon" class="w-6 h-6 text-[var(--primary-dark-amber)]"></i>`; 
-                }
-                if (metaTheme) {
-                     // Cor da barra de status no light visual (Vermelho Claro)
-                     metaTheme.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg-light-cream').trim()); 
-                }
-            } else { // SE TEMA É 'LIGHT' (VARIÁVEL) -> APLICAR VISUAL ESCURO (Vermelho Bordô/Amarelo)
-                body.classList.add('light-mode'); 
-                if (themeToggleBtn) {
-                    // Mostrar Sol (Sugere ir para o modo CLARO)
-                    themeToggleBtn.innerHTML = `<i data-lucide="sun" class="w-6 h-6 text-amber-400"></i>`; 
-                }
-                if (metaTheme) {
-                     // Cor da barra de status no dark visual (Vermelho Bordô)
-                     metaTheme.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--liturgical-red-dark').trim()); 
-                }
-            }
-            lucide.createIcons();
-            currentTheme = theme;
-        }
-
-        function toggleTheme() {
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        }
         
+        // LÓGICA DE DATAS
         function getUniqueDates() {
-             // Apenas Missas serão mostradas, então filtraremos as datas apenas de eventos Missa
-             const dates = AGENDA_DATA.filter(item => item.title.includes("Missa")).map(item => item.date.trim());
+             // Garante que a lista de datas seja baseada nos dados filtrados (só Missas)
+             const dates = AGENDA_DATA.map(item => item.date.trim());
              uniqueDates = [...new Set(dates)];
              
              if (uniqueDates.length > 0) {
@@ -356,7 +279,6 @@
                  
                  let closestDate = uniqueDates[0];
                  for (const fullDate of uniqueDates) {
-                      // Tenta encontrar a data exata do dia
                       if (fullDate.startsWith(todayDay + '/Nov')) { 
                           closestDate = fullDate;
                           break;
@@ -390,9 +312,12 @@
                 button.onclick = () => selectDate(fullDate);
                 container.appendChild(button);
             });
+            
+            // Força a rolagem para o botão ativo (Restaurando o Carrossel)
             const activeBtn = container.querySelector('.date-button.active');
             if (activeBtn) {
-                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                // Rola o container, centralizando a data selecionada
+                container.scrollLeft = activeBtn.offsetLeft - (container.offsetWidth / 2) + (activeBtn.offsetWidth / 2);
             }
         }
         
@@ -407,10 +332,9 @@
             if (!container) return;
             container.innerHTML = '';
             
-            // FILTRAGEM: APENAS EVENTOS COM "Missa" NO TÍTULO
+            // FILTRAGEM: O AGENDA_DATA JÁ ESTÁ PRÉ-FILTRADO PARA CONTER APENAS MISSAS
             const filteredData = AGENDA_DATA.filter(event => 
-                event.date.trim() === currentSelectedDate && 
-                event.title.includes("Missa")
+                event.date.trim() === currentSelectedDate
             );
 
             // --- INFORMAÇÃO LITÚRGICA DO DIA ---
@@ -435,9 +359,10 @@
 
             if (filteredData.length === 0) {
                 // Mensagem de "Sem Missa"
-                container.innerHTML += `<div class="p-6 card rounded-xl shadow-md text-center text-[var(--text-light-mode)] light-mode:text-[var(--text-dark-mode)]">
+                container.innerHTML += `<div class="p-6 card rounded-xl shadow-md text-center text-[var(--text-main)]">
                     <p>Nenhuma Santa Missa agendada para esta data.</p>
                 </div>`;
+                lucide.createIcons();
                 return;
             }
 
@@ -446,13 +371,9 @@
             const dayOfWeek = currentSelectedDate.split('(')[1].replace(')', '');
             const dateOnly = currentSelectedDate.split(' ')[0];
             
-            // TÍTULOS E DATAS: Destaque em Amarelo/Vermelho Vivo
-            const headerClasses = currentTheme === 'dark' 
-                ? 'text-xl font-bold text-[var(--text-light-mode)]' 
-                : 'text-xl font-bold text-amber-100'; 
-            const dateClasses = currentTheme === 'dark' 
-                ? 'text-3xl font-extrabold text-[var(--text-light-mode)]'
-                : 'text-3xl font-extrabold text-amber-200';
+            // TÍTULOS E DATAS: Destaque em Vermelho Vivo
+            const headerClasses = 'text-xl font-bold text-[var(--text-main)]'; 
+            const dateClasses = 'text-3xl font-extrabold text-[var(--text-main)]';
 
             headerDiv.innerHTML = `
                 <p class="${headerClasses}">${dayOfWeek}</p>
@@ -465,23 +386,14 @@
 
             filteredData.forEach(event => {
                 const eventDiv = document.createElement('div');
-                eventDiv.className = 'flex justify-between items-center py-3 border-b border-gray-300 last:border-b-0 light-mode:border-gray-700';
+                eventDiv.className = 'flex justify-between items-center py-3 border-b border-gray-300 last:border-b-0';
                 
-                // TITULO: Matriz/Destaque em Amarelo/Vermelho Vivo
-                const titleColor = 'text-[var(--primary-dark-amber)] light-mode:text-yellow-200'; 
-
-                // HORA: Destaque em Amarelo/Vermelho Vivo
-                const timeColor = 'text-[var(--primary-dark-amber)] light-mode:text-amber-500';
-                
-                // LOCALIZAÇÃO: Cinza mais discreto, mas legível
-                const locationColor = 'text-gray-600 light-mode:text-gray-200';
-
                 eventDiv.innerHTML = `
                     <div class="flex-1">
-                        <p class="font-bold text-base ${titleColor}">${event.title}</p>
-                        <p class="text-xs ${locationColor}">${event.location}</p>
+                        <p class="font-bold text-base event-title">${event.title}</p>
+                        <p class="text-xs event-location">${event.location}</p>
                     </div>
-                    <span class="font-bold text-lg ${timeColor} mr-4">${event.time}</span>
+                    <span class="font-bold text-lg event-time mr-4">${event.time}</span>
                 `;
                 listCard.appendChild(eventDiv);
             });
@@ -492,7 +404,7 @@
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
-            applyTheme(currentTheme); 
+            // A função applyTheme foi removida, o CSS agora é estático
             getUniqueDates(); 
             renderAgenda(); 
             lucide.createIcons();
@@ -502,23 +414,20 @@
 </head>
 <body class="min-h-screen flex flex-col">
     
-    <header class="header-bg sticky top-0 z-20 shadow-lg light-mode:border-gray-700">
-        <div class="max-w-xl mx-auto px-4 py-4 flex justify-between items-center border-b border-gray-300 light-mode:border-gray-700">
+    <header class="header-bg sticky top-0 z-20 shadow-lg border-b border-gray-300">
+        <div class="max-w-xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-start gap-3">
-                <i data-lucide="cross" class="w-8 h-8 text-[var(--primary-dark-amber)] light-mode:text-amber-400 mt-1"></i>
+                <i data-lucide="cross" class="w-8 h-8 text-[var(--primary-red)] mt-1"></i>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-[var(--text-light-mode)] light-mode:text-amber-100 leading-none">SACRISTIA</h1>
-                    <p class="text-sm font-semibold text-[var(--text-light-mode)] light-mode:text-amber-200">Agenda Oficial - Virgínia/MG</p>
+                    <h1 class="text-2xl font-extrabold text-[var(--text-main)] leading-none">SACRISTIA</h1>
+                    <p class="text-sm font-semibold text-[var(--text-main)]">Agenda Oficial - Virgínia/MG</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-4">
-                <button id="theme-toggle" onclick="toggleTheme()" class="p-1 rounded-full hover:bg-gray-200 light-mode:hover:bg-gray-700 transition-colors">
-                    </button>
-                
+            <div class="flex items-center">
                 <div class="text-right">
-                    <p class="text-xs font-bold text-[var(--primary-dark-amber)] light-mode:text-amber-400">Ano Jubilar</p>
-                    <p class="text-lg font-bold text-[var(--text-light-mode)] light-mode:text-amber-200">1866 – 2026</p>
+                    <p class="text-xs font-bold text-[var(--primary-red)]">Ano Jubilar</p>
+                    <p class="text-lg font-bold text-[var(--text-dark-red)]">1866 – 2026</p>
                 </div>
             </div>
         </div>
@@ -535,9 +444,10 @@
             <div id="agenda-content" class="space-y-4">
                 </div>
         </div>
-        </main>
+
+    </main>
     
-    <footer class="text-center py-4 text-xs text-gray-600 light-mode:text-gray-100 border-t border-gray-300 light-mode:border-gray-700 mt-auto header-bg">
+    <footer class="text-center py-4 text-xs text-gray-600 border-t border-gray-300 mt-auto header-bg">
         Desenvolvido por Emanuel Uchôas
     </footer>
     
