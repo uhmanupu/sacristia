@@ -48,41 +48,49 @@
         }
 
         /* LIQUID GLASS */
-        .card { 
+        .card, .header-bg, .agenda-card, .task-header-card, .rotina-card, .date-button { 
             background-color: var(--card-transparent); 
             backdrop-filter: blur(10px); 
             -webkit-backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.5); 
-            border-radius: 1rem; 
-            transition: background-color 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Borda sutil */
+            box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.3); /* Sombra mais suave */
+            transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
         }
+
+        /* Ajustes específicos para o header */
         .header-bg { 
-            background-color: var(--card-transparent); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
-            border-color: rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.5); 
-            transition: background-color 0.4s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
         }
 
         /* ESTILOS DE BLOCOS */
         .date-picker-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
         .date-picker-scroll::-webkit-scrollbar { display: none; }
-        .date-button { width: 70px; height: 70px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 12px; border-radius: 50%; font-weight: 700; flex-shrink: 0; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, color 0.4s, background-color 0.4s; background-color: var(--date-button-inactive-bg); color: var(--date-button-inactive-color); box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.1); }
-        .date-button.active { background-color: var(--active-bg-color); color: var(--text-light-color); font-weight: 900; box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5), -6px -6px 15px var(--active-shadow-light); transform: scale(1.05); }
+        .date-button { 
+            width: 70px; height: 70px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 12px; border-radius: 50%; font-weight: 700; flex-shrink: 0; 
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, color 0.4s, background-color 0.4s; 
+            color: var(--primary-highlight); /* Cor inativa do texto */
+            background-color: var(--card-transparent); /* Liquid glass para o botão inativo */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .date-button.active { 
+            background-color: var(--primary-highlight); /* Cor ativa sólida */
+            color: var(--text-light-color); 
+            font-weight: 900; 
+            box-shadow: 0 6px 15px var(--active-shadow-light); 
+            transform: scale(1.05); 
+            border-color: var(--primary-highlight); /* Borda da cor ativa */
+        }
         .date-button span.day-number { font-size: 1.5rem; line-height: 1; }
         .agenda-details { margin-bottom: 1.5rem; }
         
         /* ESTILOS PARA OS BLOCOS DA AGENDA (Layout "tipo assim") */
         .agenda-card, .task-header-card {
-            background-color: var(--agenda-card-bg); 
-            color: var(--agenda-card-text);
             border-radius: 1.5rem; 
-            box-shadow: 0 4px 15px var(--agenda-card-shadow);
             padding: 1.5rem; 
             text-align: center;
             margin-bottom: 1.5rem; 
+            /* Já herdam o liquid glass de .card */
+            /* A cor de fundo será ajustada via JS para uma versão transparente da cor primária */
         }
 
         .task-header-card h2 { font-size: 2.5rem; font-weight: 900; line-height: 1; }
@@ -95,8 +103,10 @@
             padding: 1rem; 
             padding-top: 0.5rem; 
             border-top: 1px solid rgba(255, 255, 255, 0.1); 
-            background-color: rgba(0, 0, 0, 0.2); 
+            background-color: rgba(0, 0, 0, 0.2); /* Fundo sutilmente escuro para contraste */
             border-radius: 0 0 0.75rem 0.75rem; 
+            backdrop-filter: blur(8px); /* Desfoque menor para o conteúdo */
+            -webkit-backdrop-filter: blur(8px);
         }
         .checklist-item { 
             display: flex; 
@@ -112,13 +122,14 @@
             cursor: pointer; 
         }
         .rotina-card {
-            background-color: var(--agenda-card-bg) !important; 
+            /* Já herda de .card, mas precisa de ajustes de canto e margem */
             text-align: left;
             padding: 1rem 1.5rem;
             margin-top: -1.5rem; 
             border-top-left-radius: 0;
             border-top-right-radius: 0;
             margin-bottom: 1.5rem; 
+            background-color: var(--card-transparent) !important; /* Força liquid glass */
         }
         .rotina-list li {
             padding: 0.4rem 0;
@@ -345,16 +356,16 @@
             return { colorName: "VERDE", title: "Féria (Dia Comum)", colors: LITURGICAL_COLORS["VERDE"] };
         }
 
-        function applyDynamicTheme(colors, liturgicalTitle) { 
-            const [primary, shadowLight, darkTone, shadowBox] = colors;
-            
-            // Setar variáveis CSS para cores dinâmicas
-            document.documentElement.style.setProperty('--primary-highlight', primary);
-            document.documentElement.style.setProperty('--secondary-contrast', (darkTone === "#66500B" ? "#A68213" : "#FEEEEE")); 
-            document.documentElement.style.setProperty('--primary-highlight-shadow', shadowBox);
-            document.documentElement.style.setProperty('--agenda-card-bg', primary); 
-            document.documentElement.style.setProperty('--bg-dark-color', darkTone); // Fundo do body agora dinâmico
-            
-            // Gerar a cor transparente para o liquid glass com base na darkTone do dia
-            const cardOpacity = '0.75';
-            co
+        // Função para converter hex para RGBA
+        function hexToRgba(hex, alpha) {
+            let r = 0, g = 0, b = 0;
+            // Handle 3-digit hex
+            if (hex.length === 4) {
+                r = parseInt(hex[1] + hex[1], 16);
+                g = parseInt(hex[2] + hex[2], 16);
+                b = parseInt(hex[3] + hex[3], 16);
+            }
+            // Handle 6-digit hex
+            else if (hex.length === 7) {
+                r = parseInt(hex.substring(1, 3), 16);
+  
