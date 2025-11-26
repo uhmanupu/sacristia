@@ -329,14 +329,14 @@
 
         // Função utilitária para converter a data do AGENDA_DATA em objeto Date
         function getDateObjectFromAgendaString(agendaDateStr) {
-            const dateOnly = agendaDateStr.split(' ')[0]; // Ex: 25/Nov
+            const dateOnly = agendaDateStr.split('(')[0].trim(); // Ex: 25/Nov
             const [day, monthAbbr] = dateOnly.split('/');
             const currentYear = new Date().getFullYear(); 
-            // Converte a abreviação para nome completo e tenta criar a data
+            // Mapeamento de abreviações de meses
             const monthMap = {'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11};
             const monthIndex = monthMap[monthAbbr];
             
-            // Adiciona o ano ao final para evitar parsing confuso
+            // Cria a data no ano atual
             return new Date(currentYear, monthIndex, parseInt(day));
         }
 
