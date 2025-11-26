@@ -210,9 +210,20 @@
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 5 – Bairro Roseira (Pe. Edimilson)" }
         ];
         
+        // 🚨 ÚLTIMA ALTERAÇÃO SOLICITADA PELO USUÁRIO (Checklist da Missa) 🚨
         const SACRISTY_CHECKLIST = [
-            "Água (Galhetas)", "Vinho (Galhetas)", "Patena (Pão Consagrado)", "Cálice (Corporal, Purificatório)", "Âmbula (Reservar Hóstias)", "Hóstia Grande (Para o Sacerdote)", "Hóstia Pequena (Para os Fiéis)", "Livros (Lecionário/Missal)", "Coleta (Cestas)", "Toalhas e Sinos" 
+            "Vinho",
+            "Água",
+            "Manustérgio",
+            "Corporal",
+            "Sanguíneo",
+            "Hóstis G", // Hóstia Grande
+            "Hóstisa P", // Hóstia Pequena
+            "Coleta",
+            "Missal",
+            "Lecionário"
         ];
+        // -------------------------------------------------------------
 
         // *** TAREFAS DE ROTINA POR DIA DA SEMANA (FINAL) ***
         const tarefasRotinaSemanal = {
@@ -372,14 +383,17 @@
 
                 button.innerHTML = `<span class="day-number">${dayNumber}</span><span class="day-text">${dayText}</span>`;
                 
+                // 🚨 CORREÇÃO CRÍTICA: Não usar addEventListener(onclick) no loop, pois ele não estava funcionando. Usar onclick diretamente.
+                button.onclick = () => selectDate(fullDate); 
+                
                 if (fullDate === currentSelectedDate) {
                     button.classList.add('active');
                 }
                 
-                button.onclick = () => selectDate(fullDate);
                 container.appendChild(button);
             });
             
+            // Scroll para o dia ativo
             const activeBtn = container.querySelector('.date-button.active');
             if (activeBtn) {
                 setTimeout(() => {
