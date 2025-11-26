@@ -210,7 +210,7 @@
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 5 – Bairro Roseira (Pe. Edimilson)" }
         ];
         
-        // 🚨 ÚLTIMA ALTERAÇÃO SOLICITADA PELO USUÁRIO (Checklist da Missa) 🚨
+        // Checklist da Missa - FINAL
         const SACRISTY_CHECKLIST = [
             "Vinho",
             "Água",
@@ -223,8 +223,7 @@
             "Missal",
             "Lecionário"
         ];
-        // -------------------------------------------------------------
-
+        
         // *** TAREFAS DE ROTINA POR DIA DA SEMANA (FINAL) ***
         const tarefasRotinaSemanal = {
             // 0: Domingo
@@ -383,7 +382,6 @@
 
                 button.innerHTML = `<span class="day-number">${dayNumber}</span><span class="day-text">${dayText}</span>`;
                 
-                // 🚨 CORREÇÃO CRÍTICA: Não usar addEventListener(onclick) no loop, pois ele não estava funcionando. Usar onclick diretamente.
                 button.onclick = () => selectDate(fullDate); 
                 
                 if (fullDate === currentSelectedDate) {
@@ -415,12 +413,14 @@
         // --- FUNÇÃO DE RENDERIZAÇÃO DE ROTINAS (Com Checkbox e Sincronização) ---
         async function exibirRotinasDiarias(currentDate, container) {
             
-            // Ponto de correção: Usar a função utilitária para garantir o objeto Date
             const date = getDateObjectFromAgendaString(currentDate); 
             const diaDaSemana = date.getDay(); // 0 (Domingo) a 6 (Sábado)
 
-            // ID FIXO PARA SINCRONIZAR A LISTA DE ROTINAS GERAIS
-            const ROTINA_MASS_ID = 'ROTINA_GERAL';
+            // 🚨 CORREÇÃO CRÍTICA: ID agora é único por dia (ROTINA_25Nov, ROTINA_26Nov, etc.)
+            const dateOnly = currentDate.split(' ')[0].replace('/', '');
+            const ROTINA_MASS_ID = `ROTINA_${dateOnly}`; // ID exclusivo por data
+            // Fim da correção 🚨
+            
             const checkedTaskIds = await loadChecklistStatus(ROTINA_MASS_ID);
             
             const rotinasDoDiaBase = tarefasRotinaSemanal[diaDaSemana];
@@ -452,9 +452,9 @@
 
                     rotinasHtml += `
                         <li class="checklist-item ${opacityClass}">
-                            <input type="checkbox" id="rotina-task-${index}" ${checkedAttribute}
+                            <input type="checkbox" id="rotina-task-${ROTINA_MASS_ID}-${index}" ${checkedAttribute}
                                 onclick="saveChecklistStatus('${ROTINA_MASS_ID}', '${taskId}', this.checked); this.parentNode.classList.toggle('opacity-50', this.checked);">
-                            <label for="rotina-task-${index}" class="text-sm font-medium cursor-pointer">${tarefa}</label>
+                            <label for="rotina-task-${ROTINA_MASS_ID}-${index}" class="text-sm font-medium cursor-pointer">${tarefa}</label>
                         </li>
                     `;
                 });
@@ -492,7 +492,7 @@
                 
                 // Geração da Lista de Missas
                 for (const event of filteredData) {
-                    // 🛠️ ID SIMPLIFICADO: Data_Hora_Inicial (para resolver o erro 400)
+                    // ID SIMPLIFICADO: Data_Hora_Inicial (este já era único)
                     const datePart = event.date.split(' ')[0].replace('/', ''); 
                     const timePart = event.time.replace(':', ''); 
                     const locationInitial = event.location.charAt(0); 
