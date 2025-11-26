@@ -274,7 +274,6 @@
         };
 
         const LITURGICAL_COLORS = {
-            // Paleta solene do usuário
             "VERMELHO": ["#B02B28", "rgba(176, 43, 40, 0.6)", "#701A18", "rgba(176, 43, 40, 0.4)"], 
             "BRANCO": ["#A68213", "rgba(166, 130, 19, 0.6)", "#66500B", "rgba(166, 130, 19, 0.4)"], 
             "VERDE": ["#006041", "rgba(0, 96, 65, 0.6)", "#003020", "rgba(0, 96, 65, 0.4)"],
@@ -327,6 +326,19 @@
         let touchstartX = 0;
         let touchstartY = 0;
         const SWIPE_THRESHOLD = 80;  
+
+        // Função utilitária para converter a data do AGENDA_DATA em objeto Date
+        function getDateObjectFromAgendaString(agendaDateStr) {
+            const dateOnly = agendaDateStr.split(' ')[0]; // Ex: 25/Nov
+            const [day, monthAbbr] = dateOnly.split('/');
+            const currentYear = new Date().getFullYear(); 
+            // Converte a abreviação para nome completo e tenta criar a data
+            const monthMap = {'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11};
+            const monthIndex = monthMap[monthAbbr];
+            
+            // Adiciona o ano ao final para evitar parsing confuso
+            return new Date(currentYear, monthIndex, parseInt(day));
+        }
 
         function getUniqueDates() { 
              const dates = AGENDA_DATA.map(item => item.date.trim());
@@ -389,13 +401,9 @@
         // --- FUNÇÃO DE RENDERIZAÇÃO DE ROTINAS (Com Checkbox e Sincronização) ---
         async function exibirRotinasDiarias(currentDate, container) {
             
-            // Lógica para obter o dia da semana (0-6)
-            const dateParts = currentDate.split('/');
-            const monthDay = parseInt(dateParts[0]);
-            const dayText = currentDate.split('(')[1]?.replace(')', '')?.trim();
-            const dayMap = {'DOM': 0, 'SEG': 1, 'TER': 2, 'QUA': 3, 'QUI': 4, 'SEX': 5, 'SÁB': 6};
-            const dayMatch = Object.keys(dayMap).find(key => dayText.toUpperCase().startsWith(key));
-            const diaDaSemana = dayMatch ? dayMap[dayMatch] : new Date().getDay(); 
+            // Ponto de correção: Usar a função utilitária para garantir o objeto Date
+            const date = getDateObjectFromAgendaString(currentDate); 
+            const diaDaSemana = date.getDay(); // 0 (Domingo) a 6 (Sábado)
 
             // ID FIXO PARA SINCRONIZAR A LISTA DE ROTINAS GERAIS
             const ROTINA_MASS_ID = 'ROTINA_GERAL';
@@ -406,16 +414,13 @@
 
             // Lógica para Limpar Portas (1ª Terça-feira do Mês)
             if (diaDaSemana === 2) { // Se for Terça-feira
-                const currentYear = new Date().getFullYear();
-                const date = new Date(currentYear + '-' + dateParts[1] + '-' + monthDay); 
-
                 let firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
                 while (firstDayOfMonth.getDay() !== 2) { // 2 is Tuesday
                     firstDayOfMonth.setDate(firstDayOfMonth.getDate() + 1);
                 }
                 const firstTuesdayOfMonth = firstDayOfMonth.getDate();
 
-                if (monthDay !== firstTuesdayOfMonth) {
+                if (date.getDate() !== firstTuesdayOfMonth) {
                     // Remove a tarefa de limpeza de portas se não for a primeira terça
                     rotinasDoDia = rotinasDoDia.filter(t => !t.includes("Limpar portas"));
                 }
@@ -426,8 +431,7 @@
 
             if (rotinasDoDia && rotinasDoDia.length > 0) {
                 rotinasDoDia.forEach((tarefa, index) => {
-                    // Usamos um taskId composto para que seja único, mas estável: ROTINA_TASK_INDICE_DA_TAREFA
-                    const taskId = `rotina_task_${index}`; 
+                    const taskId = `rotina_task_${index}`;
                     const isChecked = checkedTaskIds.includes(taskId);
                     const checkedAttribute = isChecked ? 'checked' : '';
                     const opacityClass = isChecked ? 'opacity-50' : '';
