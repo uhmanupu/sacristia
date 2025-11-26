@@ -75,7 +75,7 @@
         .checklist-item input[type="checkbox"] { margin-right: 0.75rem; accent-color: var(--primary-highlight); width: 1.25rem; height: 1.25rem; cursor: pointer; }
         
         /* ESTILOS PARA OS BLOCOS DA AGENDA (Layout "tipo assim") */
-        .agenda-card, .task-header-card {
+        .agenda-card, .task-header-card, .rotina-card {
             background-color: var(--agenda-card-bg);
             color: var(--agenda-card-text);
             border-radius: 1.5rem; /* Bordas mais arredondadas como na imagem */
@@ -109,20 +109,16 @@
             margin-top: 0.25rem;
         }
         
-        /* NOVO ESTILO PARA TAREFAS DE ROTINA */
-        .rotina-item {
-            list-style-type: none; /* Remove o ponto padrão */
-            text-align: left; /* Alinha o texto à esquerda */
-            margin-left: 0; /* Remove a margem padrão */
-            padding: 0.2rem 0;
-            opacity: 0.9;
-            font-size: 1rem; /* Tamanho da fonte ajustado */
+        /* NOVO ESTILO PARA TAREFAS DE ROTINA DENTRO DO CARD */
+        .rotina-card {
+            background-color: var(--agenda-card-bg) !important; /* Força o vermelho */
+            text-align: left;
+            padding: 1rem 1.5rem;
+            margin-top: -1rem; /* Aproxima do card Tarefas */
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            
         }
-        .rotina-card .rotina-item {
-            color: var(--text-light-color); /* Cor do texto das rotinas */
-        }
-
-        /* Estilo para a lista de tarefas dentro do card de rotina */
         .rotina-list {
             list-style-type: none; /* Remove marcadores de lista */
             padding: 0;
@@ -131,10 +127,13 @@
         .rotina-list li {
             padding: 0.4rem 0;
             border-bottom: 1px dashed rgba(255, 255, 255, 0.2); /* Linha tracejada suave */
+            font-size: 1rem;
+            font-weight: 500;
         }
         .rotina-list li:last-child {
             border-bottom: none; /* Remove a linha do último item */
         }
+
 
     </style>
 
@@ -181,11 +180,11 @@
         }
         
         // ======================================================
-        // DADOS LITÚRGICOS E DA AGENDA (Mantidos)
+        // DADOS LITÚRGICOS E DA AGENDA
         // ======================================================
 
-        const TODAY_DATE = "25/Nov (Terça-feira)"; // Ajuste se necessário para o dia atual real
-
+        const TODAY_DATE = "25/Nov (Terça-feira)"; 
+        
         const AGENDA_DATA = [
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:00", "title": "Santa Missa", "location": "Setor 3 – Bairro Mendanha (Pe. Erick)" },
@@ -292,7 +291,7 @@
             ]
         };
 
-        const LITURGICAL_INFO_MAP = { /* ... (Dados Litúrgicos Mantidos) ... */
+        const LITURGICAL_INFO_MAP = { 
             "01/Nov": { color: "BRANCO", title: "Todos os Santos (Solenidade)" }, "02/Nov": { color: "ROXO", title: "Comemoração dos Fiéis Defuntos (Finados)" }, "03/Nov": { color: "BRANCO", title: "São Martinho de Porres, Presbítero (MF)" }, "04/Nov": { color: "BRANCO", title: "São Carlos Borromeu, Bispo (MO)" }, "05/Nov": { color: "VERDE", title: "Santos Zacarias e Isabel (Féria)" }, "06/Nov": { color: "VERDE", title: "São Nuno Álvares Pereira (Féria)" }, "07/Nov": { color: "VERDE", title: "São Vilibrordo (Féria)" }, "08/Nov": { color: "BRANCO", title: "Santa Isabel da Trindade (N. Sra. no Sábado)" }, "09/Nov": { color: "BRANCO", title: "Dedicação da Basílica de Latrão (Festa)" }, "10/Nov": { color: "BRANCO", title: "São Leão Magno, Papa e Doutor da Igreja" }, "11/Nov": { color: "BRANCO", title: "São Martinho de Tours, Bispo" }, "12/Nov": { color: "VERMELHO", title: "São Josafá Kuncewicz, Bispo e Mártir" }, "13/Nov": { color: "VERDE", title: "São Diogo de Alcalá (Féria)" }, "14/Nov": { color: "VERDE", title: "São Gregório Palamas (Féria)" }, "15/Nov": { color: "BRANCO", title: "Santo Alberto Magno, Bispo e Doutor da Igreja" }, "16/Nov": { color: "BRANCO", title: "Santa Margarida da Escócia / Santa Gertrudes" }, "17/Nov": { color: "VERDE", title: "Santa Isabel da Hungria (Féria)" }, "18/Nov": { color: "BRANCO", title: "Dedicação das Basílicas de S. Pedro e S. Paulo" }, "19/Nov": { color: "VERMELHO", title: "Santos Roque G. e Comp., Mártires (MO)" }, "20/Nov": { color: "VERDE", title: "São Félix de Valois (Féria)" }, "21/Nov": { color: "BRANCO", title: "Apresentação de Nossa Senhora (Memória)" }, "22/Nov": { color: "VERMELHO", title: "Santa Cecília, Virgem e Mártir (Memória)" }, "23/Nov": { color: "BRANCO", title: "Nosso Senhor Jesus Cristo Rei do Universo (Solenidade)" }, "24/Nov": { color: "VERMELHO", title: "Santos André Dung-Lac e Comp., Mártires (MO)" }, "25/Nov": { color: "VERMELHO", title: "Santa Catarina de Alexandria, Virgem e Mártir" }, "26/Nov": { color: "VERDE", title: "São Leonardo de Porto Maurício (Féria)" }, "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" }, "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" }, "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, "30/Nov": { color: "VERMELHO", title: "Santo André, Apóstolo (Festa)" } 
         };
 
@@ -394,10 +393,56 @@
             const liturgicalInfo = getLiturgicalInfo(fullDate);
             applyDynamicTheme(liturgicalInfo.colors);
 
-            renderAgenda(); // Esta função agora renderiza TUDO
+            renderAgenda(); 
             renderDatePicker(); 
+        }
 
-            // A exibição das rotinas é chamada DENTRO do renderAgenda() agora
+        // --- NOVO CÓDIGO: EXIBIÇÃO DE ROTINAS DIÁRIAS (Chamado dentro de renderAgenda) ---
+        function exibirRotinasDiarias(currentDate, container) {
+            
+            // Note: Não podemos usar new Date() diretamente em '25/Nov' sem o ano, pode falhar.
+            // Usamos a lógica de dia da semana do AGENDA_DATA ou a data do sistema
+            const dateParts = currentDate.split('/');
+            const monthDay = dateParts[0];
+            const currentYear = new Date().getFullYear();
+            
+            // Simulação de objeto Date para obter o dia da semana (0-6)
+            let date = new Date(currentYear + '-' + monthDay.trim().split(' ')[0] + '-1'); // Cria uma data fake no mês
+            
+            // Tentativa de obter o dia da semana real (precisa de uma data completa)
+            // Se falhar, vamos pegar o dia da semana atual do sistema
+            let diaDaSemana = new Date().getDay(); 
+            
+            // Tentativa de obter o dia da semana a partir do AGENDA_DATA para maior precisão
+            const dayText = currentDate.split('(')[1]?.replace(')', '')?.trim();
+            const dayMap = {'DOM': 0, 'SEG': 1, 'TER': 2, 'QUA': 3, 'QUI': 4, 'SEX': 5, 'SÁB': 6};
+            const dayMatch = Object.keys(dayMap).find(key => dayText.toUpperCase().startsWith(key));
+            if (dayMatch) {
+                diaDaSemana = dayMap[dayMatch];
+            }
+
+            const rotinasDoDia = tarefasRotinaSemanal[diaDaSemana];
+            let rotinasHtml = '';
+
+            if (rotinasDoDia && rotinasDoDia.length > 0) {
+                rotinasDoDia.forEach(tarefa => {
+                    rotinasHtml += `<li class="rotina-item">${tarefa}</li>`;
+                });
+            } else {
+                rotinasHtml += `<li class="rotina-item">Nenhuma tarefa de rotina específica programada.</li>`;
+            }
+            
+            // Injeta o bloco de Rotinas
+            container.innerHTML += `
+                <div class="task-header-card" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                    <h2>Tarefas</h2>
+                </div>
+                <div class="rotina-card" style="border-top-left-radius: 0; border-top-right-radius: 0; padding-top: 1rem;">
+                    <ul id="lista-rotinas" class="rotina-list">
+                        ${rotinasHtml}
+                    </ul>
+                </div>
+            `;
         }
 
         // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO: AGENDA + ROTINAS ---
@@ -407,19 +452,115 @@
             container.innerHTML = ''; // Limpa tudo para recarregar
 
             const filteredData = AGENDA_DATA.filter(event => event.date.trim() === currentSelectedDate);
-            const dateObj = new Date(currentSelectedDate.split('/')[0] + ' ' + (new Date().getFullYear())); // Cria objeto Date
-            const diaDaSemana = dateObj.getDay(); // 0 (Domingo) a 6 (Sábado)
+            const dateOnly = currentSelectedDate.split(' ')[0];
 
-            // 1. Bloco de "Tarefas" (Estilo da sua imagem)
-            container.innerHTML += `
-                <div class="task-header-card">
-                    <h2>Tarefas</h2>
+            // 1. Renderiza o cabeçalho "Tarefas" e a lista de Rotinas
+            exibirRotinasDiarias(currentSelectedDate, container);
+
+            // 2. Renderiza a Missa do Dia ou mensagem de folga
+            if (filteredData.length > 0) {
+                // Renderiza o cabeçalho para separar as seções
+                container.innerHTML += `<div class="mb-4 text-center"><p class="text-xl font-bold header-title-text">${dateOnly}</p><p class="text-sm font-bold opacity-80 mt-1">Checklist da Missa (Sincronizado!)</p></div>`;
+
+                // Geração da Lista de Missas
+                for (const event of filteredData) {
+                    // 🛠️ ID SIMPLIFICADO: Data_Hora_Inicial (para resolver o erro 400)
+                    const datePart = event.date.split(' ')[0].replace('/', ''); 
+                    const timePart = event.time.replace(':', ''); 
+                    const locationInitial = event.location.charAt(0); 
+                    const massId = `${datePart}_${timePart}_${locationInitial}`; 
+                    
+                    const checkedTaskIds = await loadChecklistStatus(massId); 
+                    
+                    const checklistHtml = SACRISTY_CHECKLIST.map((item, itemIndex) => {
+                        const taskId = `task${itemIndex}`; 
+                        const isChecked = checkedTaskIds.includes(taskId);
+                        const checkedAttribute = isChecked ? 'checked' : '';
+                        const opacityClass = isChecked ? 'opacity-50' : '';
+                        
+                        return `
+                            <li class="checklist-item ${opacityClass}">
+                                <input type="checkbox" id="task-${massId}-${taskId}" ${checkedAttribute}
+                                    onclick="saveChecklistStatus('${massId}', '${taskId}', this.checked); this.parentNode.classList.toggle('opacity-50', this.checked);">
+                                <label for="task-${massId}-${taskId}" class="text-sm font-medium cursor-pointer">${item}</label>
+                            </li>
+                        `;
+                    }).join('');
+                    
+                    // Estrutura do Card da Missa (Estilo da sua foto)
+                    const details = document.createElement('details');
+                    details.className = 'agenda-details';
+                    details.innerHTML = `
+                        <summary class="agenda-card" style="display: block;">
+                            <div class="time-title">${event.time} - ${event.title}</div>
+                            <div class="location-details">${event.location.split('(')[0].trim()}</div>
+                            <div class="priest-name">(${event.location.split('(')[1].replace(')', '')})</div>
+                        </summary>
+                        <div class="checklist-content">
+                            <p class="text-xs opacity-70 mb-2">Marque os itens à medida que a Sacristia for preparada:</p>
+                            <ul class="list-none space-y-1">
+                                ${checklistHtml}
+                            </ul>
+                        </div>
+                    `;
+                    container.appendChild(details);
+                }
+            } else {
+                container.innerHTML += `<div class="p-6 card rounded-xl shadow-md text-center"><p>Nenhuma Santa Missa agendada para esta data. (Sacristia em folga 😉)</p></div>`;
+            }
+
+
+            lucide.createIcons();
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            getUniqueDates(); 
+            const initialDate = uniqueDates.find(date => date === TODAY_DATE);
+            selectDate(initialDate || uniqueDates[0]); 
+        });
+
+    </script>
+</head>
+<body class="min-h-screen flex flex-col">
+    
+    <header class="header-bg sticky top-0 z-20 shadow-lg border-b border-gray-300 border-opacity-20">
+        <div class="max-w-xl mx-auto px-4 py-4 flex justify-between items-center">
+            
+            <div class="flex items-start gap-3">
+                <i data-lucide="cross" class="w-8 h-8 header-highlight-text mt-1"></i>
+                <div>
+                    <h1 class="text-2xl font-extrabold header-title-text leading-none">SACRISTIA</h1>
+                    <p class="text-sm font-semibold header-title-text">Checklist Litúrgico - Virgínia/MG</p>
                 </div>
-            `;
+            </div>
+            
+            <div class="flex items-center">
+                <div class="text-right">
+                    <p class="text-xs font-bold header-highlight-text">Ano Jubilar</p>
+                    <p class="text-lg font-bold header-title-text">1866 – 2026</p>
+                </div>
+            </div>
+        </div>
+    </header>
 
-            // 2. Bloco de Tarefas de Rotina (dentro do estilo da sua imagem, porém lista)
-            const rotinasDoDia = tarefasRotinaSemanal[diaDaSemana];
-            let rotinasHtml = '';
-            if (rotinasDoDia && rotinasDoDia.length > 0) {
-                rotinasDoDia.forEach(tarefa => {
-                    rotinasHtml += `<li class="rotina-
+    <main class="flex-1 max-w-xl mx-auto px-4 py-6 w-full">
+        
+        <div id="agenda-section">
+            <div class="mb-6">
+                <div id="date-picker-container" class="date-picker-scroll flex pb-2">
+                    </div>
+            </div>
+            
+            <div id="agenda-content" class="space-y-4">
+                </div>
+        </div>
+
+    </main>
+    
+    <footer class="text-center py-4 text-xs text-gray-400 border-t border-gray-300 border-opacity-20 mt-auto header-bg">
+        Desenvolvido por Emanuel Uchôas
+    </footer>
+    
+</body>
+</html>
