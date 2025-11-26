@@ -1,106 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SACRISTIA - Checklist Sincronizado</title>
-    <meta name="theme-color" content="#501515"> 
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Sacristia">
-    <meta name="mobile-web-web-app-status-bar-style" content="black-translucent">
-    
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/12114/12114233.png">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/12114/12114233.png">
-    <link rel="manifest" href="./manifest.json">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
-    
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ================================================= */
-        /* VARIÁVEIS DE COR (INJETADAS PELO JS COM BASE NA LITURGIA) */
-        /* ================================================= */
-        :root {
-            --bg-dark-color: #501515; 
-            --text-light-color: #FEEEEE; 
-            --primary-highlight: #DC2626; 
-            --secondary-contrast: #fcd34d; 
-            --card-transparent: rgba(80, 21, 21, 0.7); 
-            --primary-highlight-shadow: rgba(220, 38, 38, 0.4);
-        }
-        
-        body { 
-            font-family: 'Merriweather', serif;
-            background-color: var(--bg-dark-color);
-            color: var(--text-light-color); 
-            transition: background-color 0.4s ease, color 0.4s ease; 
-        }
-
-        /* LIQUID GLASS (DARK MODE AJUSTADO) */
-        .card { 
-            background-color: var(--card-transparent); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.5); 
-            border-radius: 1rem; 
-            transition: background-color 0.4s ease;
-        }
-        .header-bg { 
-            background-color: var(--card-transparent); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
-            border-color: rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.5); 
-            transition: background-color 0.4s ease;
-        }
-
-        /* DESTAQUE LITÚRGICO (Box de Status) */
-        #liturgical-info {
-            background-color: var(--primary-highlight); 
-            color: var(--text-light-color); 
-            box-shadow: 0 4px 15px var(--primary-highlight-shadow);
-            transition: background-color 0.4s ease, box-shadow 0.4s ease;
-        }
-        .liturgical-icon {
-            color: var(--secondary-contrast); 
-            transition: color 0.4s ease;
-        }
-
-        /* CARROSSEL (Mantido) */
-        .date-picker-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
-        .date-picker-scroll::-webkit-scrollbar { display: none; }
-        .date-button { width: 70px; height: 70px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 12px; border-radius: 50%; font-weight: 700; flex-shrink: 0; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, color 0.4s, background-color 0.4s; background-color: var(--bg-dark-color); color: var(--text-light-color); box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.1); }
-        .date-button.active { background-color: var(--active-bg-color); color: var(--text-light-color); font-weight: 900; box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5), -6px -6px 15px var(--active-shadow-light); transform: scale(1.05); }
-        .date-button span.day-number { font-size: 1.5rem; line-height: 1; }
-        .date-button span.day-text { font-size: 0.6rem; text-transform: uppercase; font-weight: 700; }
-        
-        /* ESTILOS DA NOVA LISTA DE TAREFAS (DETAILS/SUMMARY) */
-        .agenda-details { margin-bottom: 1.5rem; }
-        .agenda-summary { display: flex; justify-content: space-between; align-items: center; padding: 1rem; cursor: pointer; list-style: none; background-color: var(--card-transparent); border-radius: 0.75rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); transition: background-color 0.2s; }
-        .agenda-summary:hover { opacity: 0.9; }
-        .agenda-summary::after { content: '▼'; font-size: 0.75rem; transition: transform 0.2s; color: var(--primary-highlight); }
-        details[open] .agenda-summary::after { transform: rotate(180deg); }
-        .summary-title { color: var(--primary-highlight); font-weight: 900; }
-        .summary-time { font-size: 1.4rem; color: var(--primary-highlight); font-weight: 900; }
-        .checklist-content { padding: 1rem; padding-top: 0.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1); background-color: rgba(0, 0, 0, 0.2); border-radius: 0 0 0.75rem 0.75rem; }
-        .checklist-item { display: flex; align-items: center; padding: 0.4rem 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); }
-        .checklist-item:last-child { border-bottom: none; }
-        .checklist-item input[type="checkbox"] { margin-right: 0.75rem; accent-color: var(--primary-highlight); width: 1.25rem; height: 1.25rem; cursor: pointer; }
-        
-        .event-title, .event-time { color: var(--primary-highlight); transition: color 0.4s ease; font-weight: 900; }
-        .event-time { font-size: 1.2rem; }
-        .event-location { color: var(--text-light-color); opacity: 0.7; transition: color 0.4s ease; }
-        .header-title-text, .footer-title-text { color: var(--text-light-color); transition: color 0.4s ease; }
-        .header-highlight-text, .footer-highlight-text { color: var(--primary-highlight); transition: color 0.4s ease; }
-        
-    </style>
-
-    <script>
+<script>
         // ======================================================
         // ESTRUTURA SUPABASE PARA PERSISTÊNCIA DE DADOS
         // ======================================================
@@ -110,20 +8,16 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_1XIR9lKBrT2oykOOR1Jxig_vg5thXgU'; 
         const CHECKLIST_TABLE_NAME = 'sacristy_tasks'; 
 
-        // 🛠️ NOVO BLOCO DE INICIALIZAÇÃO (FIXED):
+        // 🛠️ BLOCO DE INICIALIZAÇÃO CORRIGIDO
         let supabase = null; 
 
         if (typeof window !== 'undefined' && window.supabase && SUPABASE_URL.includes('.supabase.co')) {
             try {
-                 // Cria o cliente usando o objeto global (window.supabase)
                  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             } catch (e) {
                 console.error("Supabase Initialization Error:", e);
             }
-        } else if (typeof window !== 'undefined' && !window.supabase) {
-             console.error("Erro: Supabase CDN não carregado.");
         }
-        
         
         /**
          * Salva ou atualiza o status de uma tarefa no banco de dados.
@@ -146,6 +40,7 @@
 
             if (error) {
                 console.error("Erro ao salvar status da tarefa:", error.message);
+                // NOTA: Se o erro 400 persistir, pode ser necessário limpar os dados antigos com IDs longos do banco.
             }
         }
 
@@ -210,7 +105,7 @@
             "BRANCO": ["#FBBF24", "rgba(255, 240, 180, 0.6)", "#B45309", "rgba(251, 191, 36, 0.4)"], "VERMELHO": ["#DC2626", "rgba(255, 100, 100, 0.6)", "#501515", "rgba(220, 38, 38, 0.4)"], "ROXO": ["#8B5CF6", "rgba(180, 150, 255, 0.6)", "#4338CA", "rgba(139, 92, 246, 0.4)"], "VERDE": ["#10B981", "rgba(150, 255, 200, 0.6)", "#065F46", "rgba(16, 185, 129, 0.4)"],
         };
 
-        function getLiturgicalInfo(dateStr) { 
+        function getLiturgicalInfo(dateStr) { /* ... (Mantido) ... */
             const dayMonth = dateStr.split(' ')[0];
             const info = LITURGICAL_INFO_MAP[dayMonth];
             
@@ -221,7 +116,7 @@
             return { colorName: "VERDE", title: "Féria (Dia Comum)", colors: LITURGICAL_COLORS["VERDE"] };
         }
 
-        function applyDynamicTheme(colors) { 
+        function applyDynamicTheme(colors) { /* ... (Mantido) ... */
             const [primary, shadowLight, darkTone, shadowBox] = colors;
             
             document.documentElement.style.setProperty('--primary-highlight', primary);
@@ -246,7 +141,7 @@
         let touchstartY = 0;
         const SWIPE_THRESHOLD = 80;  
 
-        function getUniqueDates() { 
+        function getUniqueDates() { /* ... (Mantido) ... */
              const dates = AGENDA_DATA.map(item => item.date.trim());
              uniqueDates = [...new Set(dates)];
              if (currentSelectedDate === '') {
@@ -255,7 +150,7 @@
              }
         }
         
-        function renderDatePicker() { 
+        function renderDatePicker() { /* ... (Mantido) ... */
             getUniqueDates();
             const container = document.getElementById('date-picker-container');
             if (!container) return; 
@@ -294,7 +189,7 @@
             }
         }
         
-        function selectDate(fullDate) { 
+        function selectDate(fullDate) { /* ... (Mantido) ... */
             currentSelectedDate = fullDate;
             
             const liturgicalInfo = getLiturgicalInfo(fullDate);
@@ -344,14 +239,20 @@
 
             // Geração da Lista de Missas como Checklists Colapsáveis
             for (const [index, event] of filteredData.entries()) {
-                const massId = `${event.date.split(' ')[0].replace('/', '-')}_${event.time.replace(':', '')}_${event.location.replace(/[^a-zA-Z0-9]/g, '')}`;
+                // Geração de ID simples (Data+Hora+PrimeiraLetraLocal)
+                const datePart = event.date.split(' ')[0].replace('/', ''); // Ex: 25Nov
+                const timePart = event.time.replace(':', ''); // Ex: 1900
+                const locationInitial = event.location.charAt(0); // Ex: I (Igreja) ou S (Setor)
+                const massId = `${datePart}_${timePart}_${locationInitial}`; 
                 
                 // Carrega status salvo
                 const checkedTaskIds = await loadChecklistStatus(massId); 
                 
                 // 1. Monta o corpo do Checklist
-                const checklistHtml = SACRISTY_CHECKLIST.map(item => {
-                    const taskId = item.replace(/[^a-zA-Z0-9]/g, '-');
+                const checklistHtml = SACRISTY_CHECKLIST.map((item, itemIndex) => {
+                    // ID da tarefa usando o índice para ser curto
+                    const taskId = `task${itemIndex}`; 
+                    
                     const isChecked = checkedTaskIds.includes(taskId);
                     const checkedAttribute = isChecked ? 'checked' : '';
                     const opacityClass = isChecked ? 'opacity-50' : '';
