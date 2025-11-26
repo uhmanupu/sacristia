@@ -89,8 +89,6 @@
             padding: 1.5rem; 
             text-align: center;
             margin-bottom: 1.5rem; 
-            /* Já herdam o liquid glass de .card */
-            /* A cor de fundo será ajustada via JS para uma versão transparente da cor primária */
         }
 
         .task-header-card h2 { font-size: 2.5rem; font-weight: 900; line-height: 1; }
@@ -196,7 +194,7 @@
         // DADOS LITÚRGICOS E DA AGENDA
         // ======================================================
 
-        // 🚨 CRÍTICO: Função que pega a data atual do dispositivo
+        // CRÍTICO: Função que pega a data atual do dispositivo
         function getTodayAgendaString() {
             const today = new Date();
             const day = today.getDate().toString().padStart(2, '0');
@@ -231,110 +229,49 @@
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:30", "title": "Santa Missa", "location": "Setor 7 – Bairro Retiro dos Marins (Pe. Erick)" },
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "11:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Palmeiras (Pe. Erick)" },
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 5 – Bairro Roseira (Pe. Edimilson)" },
-            // Blindagem: Adicionado para evitar crash se a data do dispositivo for 01/Dec
+            // Blindagem: Adicionado para evitar crash se a data do dispositivo for 01/Dec e não houver data na agenda
             { "date": "01/Dec (Segunda-feira)", "dayOfWeek": "SEG", "time": "00:00", "title": "Folga", "location": "Nenhuma Missa" },
         ];
         
         // Checklist da Missa - FINAL
         const SACRISTY_CHECKLIST = [
-            "Vinho",
-            "Água",
-            "Manustérgio",
-            "Corporal",
-            "Sanguíneo",
-            "Hóstis G", // Hóstia Grande
-            "Hóstisa P", // Hóstia Pequena
-            "Coleta",
-            "Missal",
-            "Lecionário"
+            "Vinho", "Água", "Manustérgio", "Corporal", "Sanguíneo", "Hóstis G", "Hóstisa P", "Coleta", "Missal", "Lecionário"
         ];
         
         // *** TAREFAS DE ROTINA POR DIA DA SEMANA (FINAL) ***
         const tarefasRotinaSemanal = {
             // 0: Domingo
-            0: [
-                "Organizar Mala de missas (Diário)",
-                "Organizar Mala do Hotel (Diário)",
-                "Higienizar vasos sagrados (Após cada Missa)",
-            ],
+            0: ["Organizar Mala de missas (Diário)", "Organizar Mala do Hotel (Diário)", "Higienizar vasos sagrados (Após cada Missa)"],
             // 1: Segunda-feira
-            1: [
-                "Varrer e limpar a igreja",
-                "Varrer o passeio e escadaria central",
-                "Lavar banheiro (sacristia e social)",
-                "Lavar e passar alfaias e toalhas",
-                "Higienizar vasos sagrados das malas",
-                "Organizar Mala de missas (Diário)",
-            ],
+            1: ["Varrer e limpar a igreja", "Varrer o passeio e escadaria central", "Lavar banheiro (sacristia e social)", "Lavar e passar alfaias e toalhas", "Higienizar vasos sagrados das malas", "Organizar Mala de missas (Diário)"],
             // 2: Terça-feira (Nova regra: Limpar bancos + Limpar Portas 1x/mês)
-            2: [
-                "Lavar vestes de leitores",
-                "Limpar bancos (Geral)",
-                "Limpar portas (1ª Terça-feira do Mês)",
-                "Organizar Mala de missas (Diário)",
-            ],
+            2: ["Lavar vestes de leitores", "Limpar bancos (Geral)", "Limpar portas (1ª Terça-feira do Mês)", "Organizar Mala de missas (Diário)"],
             // 3: Quarta-feira
-            3: [
-                "Organizar Armário sacristia",
-                "Limpar imagens e altares (1ª e 3ª do mês)",
-                "Organizar Mala de missas (Diário)",
-            ],
+            3: ["Organizar Armário sacristia", "Limpar imagens e altares (1ª e 3ª do mês)", "Organizar Mala de missas (Diário)"],
             // 4: Quinta-feira (Nova regra: Limpar Coro)
-            4: [
-                "Limpar coro (Geral)",
-                "Varrer o passeio e escadaria central",
-                "Limpar coro, escadaria e batistério",
-                "Passar vestes de leitores e toalha do altar",
-                "Higienizar vasos sagrados das malas",
-                "Organizar Mala de missas (Diário)",
-            ],
+            4: ["Limpar coro (Geral)", "Varrer o passeio e escadaria central", "Limpar coro, escadaria e batistério", "Passar vestes de leitores e toalha do altar", "Higienizar vasos sagrados das malas", "Organizar Mala de missas (Diário)"],
             // 5: Sexta-feira
-            5: [
-                "Varrer e limpar a igreja",
-                "Lavar banheiro (sacristia e social)",
-                "Lavar alfaias e toalhas",
-                "Higienização geral de vasos sagrados (Cálice, âmbulas, etc.)",
-                "Organizar Mala de missas (Diário)",
-            ],
+            5: ["Varrer e limpar a igreja", "Lavar banheiro (sacristia e social)", "Lavar alfaias e toalhas", "Higienização geral de vasos sagrados (Cálice, âmbulas, etc.)", "Organizar Mala de missas (Diário)"],
             // 6: Sábado
-            6: [
-                "Varrer o passeio e escadaria central",
-                "Jogar água no passeio/escadaria",
-                "Organizar Mala de missas (Diário)",
-            ]
+            6: ["Varrer o passeio e escadaria central", "Jogar água no passeio/escadaria", "Organizar Mala de missas (Diário)"]
         };
 
         const LITURGICAL_INFO_MAP = { 
-            "01/Nov": { color: "BRANCO", title: "Todos os Santos (Solenidade)" }, 
-            "02/Nov": { color: "ROXO", title: "Comemoração dos Fiéis Defuntos (Finados)" }, 
-            "03/Nov": { color: "BRANCO", title: "São Martinho de Porres, Presbítero (MF)" }, 
-            "04/Nov": { color: "BRANCO", title: "São Carlos Borromeu, Bispo (MO)" }, 
-            "05/Nov": { color: "VERDE", title: "Santos Zacarias e Isabel (Féria)" }, 
-            "06/Nov": { color: "VERDE", title: "São Nuno Álvares Pereira (Féria)" }, 
-            "07/Nov": { color: "VERDE", title: "São Vilibrordo (Féria)" }, 
-            "08/Nov": { color: "BRANCO", title: "Santa Isabel da Trindade (N. Sra. no Sábado)" }, 
-            "09/Nov": { color: "BRANCO", title: "Dedicação da Basílica de Latrão (Festa)" }, 
-            "10/Nov": { color: "BRANCO", title: "São Leão Magno, Papa e Doutor da Igreja" }, 
-            "11/Nov": { color: "BRANCO", title: "São Martinho de Tours, Bispo" }, 
-            "12/Nov": { color: "VERMELHO", title: "São Josafá Kuncewicz, Bispo e Mártir" }, 
-            "13/Nov": { color: "VERDE", title: "São Diogo de Alcalá (Féria)" }, 
-            "14/Nov": { color: "VERDE", title: "São Gregório Palamas (Féria)" }, 
-            "15/Nov": { color: "BRANCO", title: "Santo Alberto Magno, Bispo e Doutor da Igreja" }, 
-            "16/Nov": { color: "BRANCO", title: "Santa Margarida da Escócia / Santa Gertrudes" }, 
-            "17/Nov": { color: "VERDE", title: "Santa Isabel da Hungria (Féria)" }, 
-            "18/Nov": { color: "BRANCO", title: "Dedicação das Basílicas de S. Pedro e S. Paulo" }, 
-            "19/Nov": { color: "VERMELHO", title: "Santos Roque G. e Comp., Mártires (MO)" }, 
-            "20/Nov": { color: "VERDE", title: "São Félix de Valois (Féria)" }, 
-            "21/Nov": { color: "BRANCO", title: "Apresentação de Nossa Senhora (Memória)" }, 
-            "22/Nov": { color: "VERMELHO", title: "Santa Cecília, Virgem e Mártir (Memória)" }, 
-            "23/Nov": { color: "BRANCO", title: "Nosso Senhor Jesus Cristo Rei do Universo (Solenidade)" }, 
-            "24/Nov": { color: "VERMELHO", title: "Santos André Dung-Lac e Comp., Mártires (MO)" }, 
-            "25/Nov": { color: "VERMELHO", title: "Santa Catarina de Alexandria, Virgem e Mártir" }, 
-            "26/Nov": { color: "VERDE", title: "São Leonardo de Porto Maurício (Féria)" }, 
-            "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" }, 
-            "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" }, 
-            "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, 
-            "30/Nov": { color: "ROXO", title: "1º Domingo do Advento (Ano A)" }, 
+            "01/Nov": { color: "BRANCO", title: "Todos os Santos (Solenidade)" }, "02/Nov": { color: "ROXO", title: "Comemoração dos Fiéis Defuntos (Finados)" }, 
+            "03/Nov": { color: "BRANCO", title: "São Martinho de Porres, Presbítero (MF)" }, "04/Nov": { color: "BRANCO", title: "São Carlos Borromeu, Bispo (MO)" }, 
+            "05/Nov": { color: "VERDE", title: "Santos Zacarias e Isabel (Féria)" }, "06/Nov": { color: "VERDE", title: "São Nuno Álvares Pereira (Féria)" }, 
+            "07/Nov": { color: "VERDE", title: "São Vilibrordo (Féria)" }, "08/Nov": { color: "BRANCO", title: "Santa Isabel da Trindade (N. Sra. no Sábado)" }, 
+            "09/Nov": { color: "BRANCO", title: "Dedicação da Basílica de Latrão (Festa)" }, "10/Nov": { color: "BRANCO", title: "São Leão Magno, Papa e Doutor da Igreja" }, 
+            "11/Nov": { color: "BRANCO", title: "São Martinho de Tours, Bispo" }, "12/Nov": { color: "VERMELHO", title: "São Josafá Kuncewicz, Bispo e Mártir" }, 
+            "13/Nov": { color: "VERDE", title: "São Diogo de Alcalá (Féria)" }, "14/Nov": { color: "VERDE", title: "São Gregório Palamas (Féria)" }, 
+            "15/Nov": { color: "BRANCO", title: "Santo Alberto Magno, Bispo e Doutor da Igreja" }, "16/Nov": { color: "BRANCO", title: "Santa Margarida da Escócia / Santa Gertrudes" }, 
+            "17/Nov": { color: "VERDE", title: "Santa Isabel da Hungria (Féria)" }, "18/Nov": { color: "BRANCO", title: "Dedicação das Basílicas de S. Pedro e S. Paulo" }, 
+            "19/Nov": { color: "VERMELHO", title: "Santos Roque G. e Comp., Mártires (MO)" }, "20/Nov": { color: "VERDE", title: "São Félix de Valois (Féria)" }, 
+            "21/Nov": { color: "BRANCO", title: "Apresentação de Nossa Senhora (Memória)" }, "22/Nov": { color: "VERMELHO", title: "Santa Cecília, Virgem e Mártir (Memória)" }, 
+            "23/Nov": { color: "BRANCO", title: "Nosso Senhor Jesus Cristo Rei do Universo (Solenidade)" }, "24/Nov": { color: "VERMELHO", title: "Santos André Dung-Lac e Comp., Mártires (MO)" }, 
+            "25/Nov": { color: "VERMELHO", title: "Santa Catarina de Alexandria, Virgem e Mártir" }, "26/Nov": { color: "VERDE", title: "São Leonardo de Porto Maurício (Féria)" }, 
+            "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" }, "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" }, 
+            "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, "30/Nov": { color: "ROXO", title: "1º Domingo do Advento (Ano A)" }, 
             "01/Dec": { color: "ROXO", title: "Féria do Advento" } 
         };
 
@@ -368,4 +305,23 @@
             // Handle 6-digit hex
             else if (hex.length === 7) {
                 r = parseInt(hex.substring(1, 3), 16);
-  
+                g = parseInt(hex.substring(3, 5), 16);
+                b = parseInt(hex.substring(5, 7), 16);
+            } else {
+                return `rgba(0, 0, 0, ${alpha})`; // Fallback seguro
+            }
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+
+        function applyDynamicTheme(colors, liturgicalTitle) { 
+            const [primaryHex, shadowLight, darkToneHex, shadowBox] = colors;
+            
+            // Converte os hex para RGBA com transparência desejada para o liquid glass
+            const cardBgRgba = hexToRgba(primaryHex, 0.7); // Cor principal do card com transparência
+            const darkBgRgba = hexToRgba(darkToneHex, 0.9); // Fundo principal um pouco mais opaco para a base
+
+            // Setar variáveis CSS para cores dinâmicas
+            document.documentElement.style.setProperty('--primary-highlight', primaryHex);
+            document.documentElement.style.setProperty('--secondary-contrast', (darkToneHex === "#66500B" ? "#A68213" : "#FEEEEE")); 
+            document.documentElem
