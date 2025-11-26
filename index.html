@@ -25,25 +25,29 @@
         /* VARIÁVEIS DE COR */
         /* ================================================= */
         :root {
-            --bg-dark-color: #501515; /* COR BASE FIXA (MAROON) */
+            --bg-dark-color: #501515; /* Cor de fundo principal, será dinâmica */
             --text-light-color: #FEEEEE; 
-            --primary-highlight: #DC2626; /* Cor dinâmica */
+            --primary-highlight: #DC2626; /* Cor de destaque (botão ativo, checkbox) */
             --secondary-contrast: #fcd34d; 
-            --card-transparent: rgba(80, 21, 21, 0.7); 
+            --card-transparent: rgba(80, 21, 21, 0.7); /* Cor do card liquid glass, será dinâmica */
             --primary-highlight-shadow: rgba(220, 38, 38, 0.4);
-            --agenda-card-bg: #DC2626; 
+            --agenda-card-bg: #DC2626; /* Cor de fundo dos cards da agenda/tarefas, será dinâmica */
             --agenda-card-text: #FEEEEE;
             --agenda-card-shadow: rgba(0, 0, 0, 0.3);
+
+            /* Cores para os botões do carrossel no estado inativo */
+            --date-button-inactive-bg: var(--bg-dark-color);
+            --date-button-inactive-color: var(--primary-highlight); /* Para harmonia com a liturgia */
         }
         
         body { 
             font-family: 'Merriweather', serif;
-            background-color: var(--bg-dark-color); 
+            background-color: var(--bg-dark-color); /* Agora dinâmico com a liturgia */
             color: var(--text-light-color); 
             transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
-        /* LIQUID GLASS */
+        /* LIQUID GLASS - Ajustado para usar var(--card-transparent) */
         .card { 
             background-color: var(--card-transparent); 
             backdrop-filter: blur(10px); 
@@ -65,14 +69,23 @@
         /* ESTILOS DE BLOCOS */
         .date-picker-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
         .date-picker-scroll::-webkit-scrollbar { display: none; }
-        .date-button { width: 70px; height: 70px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 12px; border-radius: 50%; font-weight: 700; flex-shrink: 0; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, color 0.4s, background-color 0.4s; background-color: var(--bg-dark-color); color: var(--text-light-color); box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.1); }
-        .date-button.active { background-color: var(--active-bg-color); color: var(--text-light-color); font-weight: 900; box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5), -6px -6px 15px var(--active-shadow-light); transform: scale(1.05); }
+        .date-button { 
+            width: 70px; height: 70px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 12px; border-radius: 50%; font-weight: 700; flex-shrink: 0; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, color 0.4s, background-color 0.4s; 
+            background-color: var(--date-button-inactive-bg); /* Cor inativa pega a cor de fundo do body */
+            color: var(--date-button-inactive-color); /* Cor do texto inativo pega a primary-highlight */
+            box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.1); 
+        }
+        .date-button.active { 
+            background-color: var(--active-bg-color); 
+            color: var(--text-light-color); /* Texto do dia ativo sempre claro */
+            font-weight: 900; box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5), -6px -6px 15px var(--active-shadow-light); transform: scale(1.05); 
+        }
         .date-button span.day-number { font-size: 1.5rem; line-height: 1; }
         .agenda-details { margin-bottom: 1.5rem; }
         
         /* ESTILOS PARA OS BLOCOS DA AGENDA (Layout "tipo assim") */
         .agenda-card, .task-header-card {
-            background-color: var(--agenda-card-bg); 
+            background-color: var(--agenda-card-bg); /* O card principal usará a cor dinâmica forte */
             color: var(--agenda-card-text);
             border-radius: 1.5rem; 
             box-shadow: 0 4px 15px var(--agenda-card-shadow);
@@ -126,6 +139,15 @@
             border-bottom: none; 
         }
 
+        /* Estilo para o Santo do Dia */
+        #santo-do-dia {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-top: -0.25rem; /* Ajuste para encostar mais no título */
+            color: var(--secondary-contrast); /* Cor de contraste para visibilidade */
+        }
+
     </style>
 
     <script>
@@ -174,9 +196,9 @@
         // DADOS LITÚRGICOS E DA AGENDA
         // ======================================================
 
-        const TODAY_DATE = "25/Nov (Terça-feira)"; 
-        
-        const AGENDA_DATA = [ /* ... (Dados da Agenda Mantidos) ... */
+        const TODAY_DATE = "27/Nov (Quinta-feira)"; // ATUALIZADO PARA TESTE
+
+        const AGENDA_DATA = [
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:00", "title": "Santa Missa", "location": "Setor 3 – Bairro Mendanha (Pe. Erick)" },
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Retirinho (Pe. Edimilson)" },
@@ -203,7 +225,7 @@
             "Água (Galhetas)", "Vinho (Galhetas)", "Patena (Pão Consagrado)", "Cálice (Corporal, Purificatório)", "Âmbula (Reservar Hóstias)", "Hóstia Grande (Para o Sacerdote)", "Hóstia Pequena (Para os Fiéis)", "Livros (Lecionário/Missal)", "Coleta (Cestas)", "Toalhas e Sinos" 
         ];
 
-        // *** NOVO OBJETO: TAREFAS DE ROTINA POR DIA DA SEMANA (FINAL) ***
+        // TAREFAS DE ROTINA POR DIA DA SEMANA
         const tarefasRotinaSemanal = {
             // 0: Domingo
             0: [
@@ -258,19 +280,18 @@
             ]
         };
 
-        const LITURGICAL_INFO_MAP = { /* ... (Mantido) ... */
+        const LITURGICAL_INFO_MAP = { 
             "01/Nov": { color: "BRANCO", title: "Todos os Santos (Solenidade)" }, "02/Nov": { color: "ROXO", title: "Comemoração dos Fiéis Defuntos (Finados)" }, "03/Nov": { color: "BRANCO", title: "São Martinho de Porres, Presbítero (MF)" }, "04/Nov": { color: "BRANCO", title: "São Carlos Borromeu, Bispo (MO)" }, "05/Nov": { color: "VERDE", title: "Santos Zacarias e Isabel (Féria)" }, "06/Nov": { color: "VERDE", title: "São Nuno Álvares Pereira (Féria)" }, "07/Nov": { color: "VERDE", title: "São Vilibrordo (Féria)" }, "08/Nov": { color: "BRANCO", title: "Santa Isabel da Trindade (N. Sra. no Sábado)" }, "09/Nov": { color: "BRANCO", title: "Dedicação da Basílica de Latrão (Festa)" }, "10/Nov": { color: "BRANCO", title: "São Leão Magno, Papa e Doutor da Igreja" }, "11/Nov": { color: "BRANCO", title: "São Martinho de Tours, Bispo" }, "12/Nov": { color: "VERMELHO", title: "São Josafá Kuncewicz, Bispo e Mártir" }, "13/Nov": { color: "VERDE", title: "São Diogo de Alcalá (Féria)" }, "14/Nov": { color: "VERDE", title: "São Gregório Palamas (Féria)" }, "15/Nov": { color: "BRANCO", title: "Santo Alberto Magno, Bispo e Doutor da Igreja" }, "16/Nov": { color: "BRANCO", title: "Santa Margarida da Escócia / Santa Gertrudes" }, "17/Nov": { color: "VERDE", title: "Santa Isabel da Hungria (Féria)" }, "18/Nov": { color: "BRANCO", title: "Dedicação das Basílicas de S. Pedro e S. Paulo" }, "19/Nov": { color: "VERMELHO", title: "Santos Roque G. e Comp., Mártires (MO)" }, "20/Nov": { color: "VERDE", title: "São Félix de Valois (Féria)" }, "21/Nov": { color: "BRANCO", title: "Apresentação de Nossa Senhora (Memória)" }, "22/Nov": { color: "VERMELHO", title: "Santa Cecília, Virgem e Mártir (Memória)" }, "23/Nov": { color: "BRANCO", title: "Nosso Senhor Jesus Cristo Rei do Universo (Solenidade)" }, "24/Nov": { color: "VERMELHO", title: "Santos André Dung-Lac e Comp., Mártires (MO)" }, "25/Nov": { color: "VERMELHO", title: "Santa Catarina de Alexandria, Virgem e Mártir" }, "26/Nov": { color: "VERDE", title: "São Leonardo de Porto Maurício (Féria)" }, "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" }, "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" }, "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, "30/Nov": { color: "VERMELHO", title: "Santo André, Apóstolo (Festa)" } 
         };
 
         const LITURGICAL_COLORS = {
-            // Nova paleta solene do usuário
             "VERMELHO": ["#B02B28", "rgba(176, 43, 40, 0.6)", "#701A18", "rgba(176, 43, 40, 0.4)"], 
             "BRANCO": ["#A68213", "rgba(166, 130, 19, 0.6)", "#66500B", "rgba(166, 130, 19, 0.4)"], 
             "VERDE": ["#006041", "rgba(0, 96, 65, 0.6)", "#003020", "rgba(0, 96, 65, 0.4)"],
             "ROXO": ["#3B3879", "rgba(59, 56, 121, 0.6)", "#1E1C3D", "rgba(59, 56, 121, 0.4)"],
         };
 
-        function getLiturgicalInfo(dateStr) { /* ... (Mantido) ... */
+        function getLiturgicalInfo(dateStr) { 
             const dayMonth = dateStr.split(' ')[0];
             const info = LITURGICAL_INFO_MAP[dayMonth];
             
@@ -278,38 +299,44 @@
                 const colors = LITURGICAL_COLORS[info.color] || LITURGICAL_COLORS["VERDE"];
                 return { colorName: info.color, title: info.title, colors: colors };
             }
+            // Default para VERDE se não houver informação específica
             return { colorName: "VERDE", title: "Féria (Dia Comum)", colors: LITURGICAL_COLORS["VERDE"] };
         }
 
-        function applyDynamicTheme(colors) { 
+        function applyDynamicTheme(colors, liturgicalTitle) { 
             const [primary, shadowLight, darkTone, shadowBox] = colors;
             
+            // Setar variáveis CSS para cores dinâmicas
             document.documentElement.style.setProperty('--primary-highlight', primary);
-            document.documentElement.style.setProperty('--secondary-contrast', (darkTone === "#66500B" ? "#A68213" : "#fcd34d"));
+            document.documentElement.style.setProperty('--secondary-contrast', (darkTone === "#66500B" ? "#A68213" : "#FEEEEE")); // Ajuste do contraste para o branco/ouro
             document.documentElement.style.setProperty('--primary-highlight-shadow', shadowBox);
+            document.documentElement.style.setProperty('--agenda-card-bg', primary); 
+            document.documentElement.style.setProperty('--bg-dark-color', darkTone); // Fundo do body agora dinâmico
             
-            document.documentElement.style.setProperty('--agenda-card-bg', primary); // Cards usam a cor dinâmica
-            
-            // Fundo e cor de texto fixos para contraste
-            document.documentElement.style.setProperty('--bg-dark-color', '#501515'); 
-            document.documentElement.style.setProperty('--text-light-color', '#FEEEEE');
+            // Gerar a cor transparente para o liquid glass com base na darkTone do dia
+            const cardOpacity = '0.75';
+            const rgbaDarkTone = darkTone.replace('#', 'rgba(' + parseInt(darkTone.substring(1, 3), 16) + ',' + parseInt(darkTone.substring(3, 5), 16) + ',' + parseInt(darkTone.substring(5, 7), 16) + ',' + cardOpacity + ')');
+            document.documentElement.style.setProperty('--card-transparent', rgbaDarkTone);
 
+
+            // Atualizar cor de fundo do body e meta tag
+            document.body.style.backgroundColor = darkTone;
             const themeMeta = document.querySelector('meta[name="theme-color"]');
             if (themeMeta) {
-                themeMeta.setAttribute('content', '#501515');
+                themeMeta.setAttribute('content', darkTone);
             }
-            
-            document.body.style.backgroundColor = '#501515';
-            document.body.style.color = '#FEEEEE';
+
+            // Atualizar o santo do dia
+            const santoDoDiaElement = document.getElementById('santo-do-dia');
+            if (santoDoDiaElement) {
+                santoDoDiaElement.textContent = liturgicalTitle;
+            }
         }
         
         let uniqueDates = [];
         let currentSelectedDate = ''; 
-        let touchstartX = 0;
-        let touchstartY = 0;
-        const SWIPE_THRESHOLD = 80;  
 
-        function getUniqueDates() { /* ... (Mantido) ... */
+        function getUniqueDates() { 
              const dates = AGENDA_DATA.map(item => item.date.trim());
              uniqueDates = [...new Set(dates)];
              if (currentSelectedDate === '') {
@@ -318,7 +345,7 @@
              }
         }
         
-        function renderDatePicker() { /* ... (Mantido) ... */
+        function renderDatePicker() { 
             getUniqueDates();
             const container = document.getElementById('date-picker-container');
             if (!container) return; 
@@ -337,7 +364,8 @@
                 
                 button.style.setProperty('--active-bg-color', bgColor);
                 button.style.setProperty('--active-shadow-light', lightShadow);
-                button.style.color = (darkTone === '#66500B' ? '#A68213' : '#FEEEEE');
+                // Cor do texto do botão: claro para ativo, primary-highlight para inativo
+                button.style.color = (fullDate === currentSelectedDate) ? 'var(--text-light-color)' : 'var(--primary-highlight)';
 
                 button.innerHTML = `<span class="day-number">${dayNumber}</span><span class="day-text">${dayText}</span>`;
                 
@@ -361,8 +389,7 @@
             currentSelectedDate = fullDate;
             
             const liturgicalInfo = getLiturgicalInfo(fullDate);
-            applyDynamicTheme(liturgicalInfo.colors);
-
+            applyDynamicTheme(liturgicalInfo.colors, liturgicalInfo.title); // Passa o título do santo
             renderAgenda(); 
             renderDatePicker(); 
         }
@@ -374,161 +401,7 @@
             const dayText = currentDate.split('(')[1]?.replace(')', '')?.trim();
             const dayMap = {'DOM': 0, 'SEG': 1, 'TER': 2, 'QUA': 3, 'QUI': 4, 'SEX': 5, 'SÁB': 6};
             const dayMatch = Object.keys(dayMap).find(key => dayText.toUpperCase().startsWith(key));
-            const diaDaSemana = dayMatch ? dayMap[dayMatch] : new Date().getDay(); 
+            const diaDaSemana = dayMatch ? dayMap[dayMatch] : null; 
 
-            // ID FIXO PARA SINCRONIZAR A LISTA DE ROTINAS GERAIS
-            const ROTINA_MASS_ID = 'ROTINA_GERAL';
-            const checkedTaskIds = await loadChecklistStatus(ROTINA_MASS_ID);
-            
-            const rotinasDoDia = tarefasRotinaSemanal[diaDaSemana];
-            let rotinasHtml = '';
-
-            if (rotinasDoDia && rotinasDoDia.length > 0) {
-                rotinasDoDia.forEach((tarefa, index) => {
-                    const taskId = `rotina_task${index}`;
-                    const isChecked = checkedTaskIds.includes(taskId);
-                    const checkedAttribute = isChecked ? 'checked' : '';
-                    const opacityClass = isChecked ? 'opacity-50' : '';
-
-                    rotinasHtml += `
-                        <li class="checklist-item ${opacityClass}">
-                            <input type="checkbox" id="rotina-task-${index}" ${checkedAttribute}
-                                onclick="saveChecklistStatus('${ROTINA_MASS_ID}', '${taskId}', this.checked); this.parentNode.classList.toggle('opacity-50', this.checked);">
-                            <label for="rotina-task-${index}" class="text-sm font-medium cursor-pointer">${tarefa}</label>
-                        </li>
-                    `;
-                });
-            } else {
-                rotinasHtml += `<li class="rotina-item">Nenhuma tarefa de rotina específica programada.</li>`;
-            }
-            
-            // Injeta o bloco de Rotinas
-            container.innerHTML += `
-                <div class="task-header-card" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
-                    <h2>Tarefas</h2>
-                </div>
-                <div class="rotina-card checklist-content" style="border-top-left-radius: 0; border-top-right-radius: 0; padding-top: 1rem;">
-                    <ul id="lista-rotinas" class="rotina-list list-none space-y-1">
-                        ${rotinasHtml}
-                    </ul>
-                </div>
-            `;
-        }
-
-        // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO: AGENDA + ROTINAS ---
-        async function renderAgenda() {
-            const container = document.getElementById('agenda-content');
-            if (!container) return;
-            container.innerHTML = ''; // Limpa tudo para recarregar
-
-            const filteredData = AGENDA_DATA.filter(event => event.date.trim() === currentSelectedDate);
-            const dateOnly = currentSelectedDate.split(' ')[0];
-
-            // 1. Renderiza o cabeçalho "Tarefas" e a lista de Rotinas
-            await exibirRotinasDiarias(currentSelectedDate, container);
-
-            // 2. Renderiza a Missa do Dia ou mensagem de folga
-            if (filteredData.length > 0) {
-                
-                // Geração da Lista de Missas
-                for (const event of filteredData) {
-                    // 🛠️ ID SIMPLIFICADO: Data_Hora_Inicial (para resolver o erro 400)
-                    const datePart = event.date.split(' ')[0].replace('/', ''); 
-                    const timePart = event.time.replace(':', ''); 
-                    const locationInitial = event.location.charAt(0); 
-                    const massId = `${datePart}_${timePart}_${locationInitial}`; 
-                    
-                    const checkedTaskIds = await loadChecklistStatus(massId); 
-                    
-                    const checklistHtml = SACRISTY_CHECKLIST.map((item, itemIndex) => {
-                        const taskId = `task${itemIndex}`; 
-                        const isChecked = checkedTaskIds.includes(taskId);
-                        const checkedAttribute = isChecked ? 'checked' : '';
-                        const opacityClass = isChecked ? 'opacity-50' : '';
-                        
-                        return `
-                            <li class="checklist-item ${opacityClass}">
-                                <input type="checkbox" id="task-${massId}-${taskId}" ${checkedAttribute}
-                                    onclick="saveChecklistStatus('${massId}', '${taskId}', this.checked); this.parentNode.classList.toggle('opacity-50', this.checked);">
-                                <label for="task-${massId}-${taskId}" class="text-sm font-medium cursor-pointer">${item}</label>
-                            </li>
-                        `;
-                    }).join('');
-                    
-                    // Estrutura do Card da Missa (Estilo da sua foto)
-                    const details = document.createElement('details');
-                    details.className = 'agenda-details';
-                    details.innerHTML = `
-                        <summary class="agenda-card" style="display: block;">
-                            <div class="time-title">${event.time} - ${event.title}</div>
-                            <div class="location-details">${event.location.split('(')[0].trim()}</div>
-                            <div class="priest-name">(${event.location.split('(')[1].replace(')', '')})</div>
-                        </summary>
-                        <div class="checklist-content">
-                            <p class="text-xs opacity-70 mb-2">Marque os itens à medida que a Sacristia for preparada:</p>
-                            <ul class="list-none space-y-1">
-                                ${checklistHtml}
-                            </ul>
-                        </div>
-                    `;
-                    container.appendChild(details);
-                }
-            } else {
-                container.innerHTML += `<div class="p-6 card rounded-xl shadow-md text-center"><p>Nenhuma Santa Missa agendada para esta data. (Sacristia em folga 😉)</p></div>`;
-            }
-
-
-            lucide.createIcons();
-        }
-
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', () => {
-            getUniqueDates(); 
-            const initialDate = uniqueDates.find(date => date === TODAY_DATE);
-            selectDate(initialDate || uniqueDates[0]); 
-        });
-
-    </script>
-</head>
-<body class="min-h-screen flex flex-col">
-    
-    <header class="header-bg sticky top-0 z-20 shadow-lg border-b border-gray-300 border-opacity-20">
-        <div class="max-w-xl mx-auto px-4 py-4 flex justify-between items-center">
-            
-            <div class="flex items-start gap-3">
-                <i data-lucide="cross" class="w-8 h-8 header-highlight-text mt-1"></i>
-                <div>
-                    <h1 class="text-2xl font-extrabold header-title-text leading-none">SACRISTIA</h1>
-                    <p class="text-sm font-semibold header-title-text">Checklist Litúrgico - Virgínia/MG</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center">
-                <div class="text-right">
-                    <p class="text-xs font-bold header-highlight-text">Ano Jubilar</p>
-                    <p class="text-lg font-bold header-title-text">1866 – 2026</p>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="flex-1 max-w-xl mx-auto px-4 py-6 w-full">
-        
-        <div id="agenda-section">
-            <div class="mb-6">
-                <div id="date-picker-container" class="date-picker-scroll flex pb-2">
-                    </div>
-            </div>
-            
-            <div id="agenda-content" class="space-y-4">
-                </div>
-        </div>
-
-    </main>
-    
-    <footer class="text-center py-4 text-xs text-gray-400 border-t border-gray-300 border-opacity-20 mt-auto header-bg">
-        Desenvolvido por Emanuel Uchôas
-    </footer>
-    
-</body>
-</html>
+            // Se for a primeira terça-feira do mês, adiciona "Limpar portas (Geral)"
+            const
