@@ -25,9 +25,9 @@
         /* VARIÁVEIS DE COR */
         /* ================================================= */
         :root {
-            --bg-dark-color: #501515; 
+            --bg-dark-color: #501515; /* COR BASE FIXA (MAROON) */
             --text-light-color: #FEEEEE; 
-            --primary-highlight: #DC2626; 
+            --primary-highlight: #DC2626; /* Cor dinâmica */
             --secondary-contrast: #fcd34d; 
             --card-transparent: rgba(80, 21, 21, 0.7); 
             --primary-highlight-shadow: rgba(220, 38, 38, 0.4);
@@ -38,12 +38,22 @@
         
         body { 
             font-family: 'Merriweather', serif;
-            background-color: var(--bg-dark-color);
+            background-color: var(--bg-dark-color); /* Usamos a cor FIXA aqui */
             color: var(--text-light-color); 
             transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
-        .header-bg { /* ... (CSS Mantido) ... */
+        /* LIQUID GLASS */
+        .card { 
+            background-color: var(--card-transparent); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.5); 
+            border-radius: 1rem; 
+            transition: background-color 0.4s ease;
+        }
+        .header-bg { /* ... (Mantido) ... */
             background-color: var(--card-transparent); 
             backdrop-filter: blur(12px); 
             -webkit-backdrop-filter: blur(12px); 
@@ -52,7 +62,7 @@
             transition: background-color 0.4s ease;
         }
 
-        /* ESTILOS DE LISTA */
+        /* ESTILOS DE BLOCOS */
         .date-picker-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
         .date-picker-scroll::-webkit-scrollbar { display: none; }
         .date-button { width: 70px; height: 70px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 12px; border-radius: 50%; font-weight: 700; flex-shrink: 0; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, color 0.4s, background-color 0.4s; background-color: var(--bg-dark-color); color: var(--text-light-color); box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.1); }
@@ -62,7 +72,7 @@
         
         /* ESTILOS PARA OS BLOCOS DA AGENDA (Layout "tipo assim") */
         .agenda-card, .task-header-card {
-            background-color: var(--agenda-card-bg);
+            background-color: var(--agenda-card-bg); /* O card principal usará a cor dinâmica forte */
             color: var(--agenda-card-text);
             border-radius: 1.5rem; 
             box-shadow: 0 4px 15px var(--agenda-card-shadow);
@@ -101,10 +111,10 @@
             background-color: var(--agenda-card-bg) !important; 
             text-align: left;
             padding: 1rem 1.5rem;
-            margin-top: -1rem; 
+            margin-top: -1.5rem; /* Ajustado para unir os blocos */
             border-top-left-radius: 0;
             border-top-right-radius: 0;
-            margin-bottom: 1.5rem; /* Adicionado para espaçar dos blocos de missa */
+            margin-bottom: 1.5rem; 
         }
         .rotina-list li {
             padding: 0.4rem 0;
@@ -193,7 +203,7 @@
             "Água (Galhetas)", "Vinho (Galhetas)", "Patena (Pão Consagrado)", "Cálice (Corporal, Purificatório)", "Âmbula (Reservar Hóstias)", "Hóstia Grande (Para o Sacerdote)", "Hóstia Pequena (Para os Fiéis)", "Livros (Lecionário/Missal)", "Coleta (Cestas)", "Toalhas e Sinos" 
         ];
 
-        // *** NOVO OBJETO: TAREFAS DE ROTINA POR DIA DA SEMANA (Revisado) ***
+        // *** NOVO OBJETO: TAREFAS DE ROTINA POR DIA DA SEMANA (FINAL) ***
         const tarefasRotinaSemanal = {
             // 0: Domingo
             0: [
@@ -267,26 +277,27 @@
             return { colorName: "VERDE", title: "Féria (Dia Comum)", colors: LITURGICAL_COLORS["VERDE"] };
         }
 
-        function applyDynamicTheme(colors) { /* ... (Mantido) ... */
+        function applyDynamicTheme(colors) { 
             const [primary, shadowLight, darkTone, shadowBox] = colors;
             
             document.documentElement.style.setProperty('--primary-highlight', primary);
             document.documentElement.style.setProperty('--secondary-contrast', (darkTone === "#B45309" ? "#FBBF24" : "#fcd34d"));
             document.documentElement.style.setProperty('--primary-highlight-shadow', shadowBox);
             
-            document.documentElement.style.setProperty('--bg-dark-color', darkTone);
+            document.documentElement.style.setProperty('--bg-dark-color', '#501515'); // Fundo fixo para contraste
             document.documentElement.style.setProperty('--text-light-color', '#FEEEEE');
+            document.documentElement.style.setProperty('--agenda-card-bg', primary); // Cards usam a cor dinâmica
             
-            const cardOpacity = (darkTone === "#B45309" ? '0.75' : '0.8');
+            const cardOpacity = '0.75';
             const rgbaDarkTone = darkTone.replace('#', 'rgba(' + parseInt(darkTone.substring(1, 3), 16) + ',' + parseInt(darkTone.substring(3, 5), 16) + ',' + parseInt(darkTone.substring(5, 7), 16) + ',' + cardOpacity + ')');
             document.documentElement.style.setProperty('--card-transparent', rgbaDarkTone);
 
             const themeMeta = document.querySelector('meta[name="theme-color"]');
             if (themeMeta) {
-                themeMeta.setAttribute('content', darkTone);
+                themeMeta.setAttribute('content', '#501515');
             }
             
-            document.body.style.backgroundColor = darkTone;
+            document.body.style.backgroundColor = '#501515';
             document.body.style.color = '#FEEEEE';
         }
         
@@ -358,6 +369,8 @@
         async function exibirRotinasDiarias(currentDate, container) {
             
             // Lógica para obter o dia da semana (0-6)
+            const dateParts = currentDate.split('/');
+            const monthDay = parseInt(dateParts[0]);
             const dayText = currentDate.split('(')[1]?.replace(')', '')?.trim();
             const dayMap = {'DOM': 0, 'SEG': 1, 'TER': 2, 'QUA': 3, 'QUI': 4, 'SEX': 5, 'SÁB': 6};
             const dayMatch = Object.keys(dayMap).find(key => dayText.toUpperCase().startsWith(key));
@@ -416,9 +429,7 @@
 
             // 2. Renderiza a Missa do Dia ou mensagem de folga
             if (filteredData.length > 0) {
-                // Renderiza o cabeçalho para separar as seções
-                container.innerHTML += `<div class="mb-4 text-center"><p class="text-3xl font-extrabold header-title-text">${dateOnly}</p><p class="text-sm font-bold opacity-80 mt-1">Checklist da Missa (Sincronizado!)</p></div>`;
-
+                
                 // Geração da Lista de Missas
                 for (const event of filteredData) {
                     // 🛠️ ID SIMPLIFICADO: Data_Hora_Inicial (para resolver o erro 400)
