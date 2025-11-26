@@ -185,7 +185,20 @@
         // DADOS LITÚRGICOS E DA AGENDA
         // ======================================================
 
-        const TODAY_DATE = "25/Nov (Terça-feira)"; 
+        // 🚨 CORREÇÃO CRÍTICA: Data Dinâmica - Obter a data atual do dispositivo
+        function getTodayAgendaString() {
+            const today = new Date();
+            const day = today.getDate().toString().padStart(2, '0');
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const dayNames = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+            
+            const monthAbbr = monthNames[today.getMonth()];
+            const dayOfWeek = dayNames[today.getDay()];
+            
+            return `${day}/${monthAbbr} (${dayOfWeek})`;
+        }
+        const TODAY_DATE = getTodayAgendaString(); 
+        // -----------------------------------------------------------------
         
         const AGENDA_DATA = [ /* ... (Dados da Agenda Mantidos) ... */
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
@@ -353,6 +366,7 @@
         function getUniqueDates() { 
              const dates = AGENDA_DATA.map(item => item.date.trim());
              uniqueDates = [...new Set(dates)];
+             // Não mexe na data atual se já estiver setada.
              if (currentSelectedDate === '') {
                  const initialDate = uniqueDates.find(date => date === TODAY_DATE);
                  currentSelectedDate = initialDate || uniqueDates[0]; 
@@ -419,7 +433,6 @@
             // 🚨 CORREÇÃO CRÍTICA: ID agora é único por dia (ROTINA_25Nov, ROTINA_26Nov, etc.)
             const dateOnly = currentDate.split(' ')[0].replace('/', '');
             const ROTINA_MASS_ID = `ROTINA_${dateOnly}`; // ID exclusivo por data
-            // Fim da correção 🚨
             
             const checkedTaskIds = await loadChecklistStatus(ROTINA_MASS_ID);
             
@@ -544,6 +557,7 @@
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             getUniqueDates(); 
+            // O selectDate agora usa a TODAY_DATE dinâmica
             const initialDate = uniqueDates.find(date => date === TODAY_DATE);
             selectDate(initialDate || uniqueDates[0]); 
         });
