@@ -145,7 +145,7 @@
         // ======================================================
         
         const SUPABASE_URL = 'https://nvefvewyxiwgwmyutbmk.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'sb_publishable_1XIR9lKBrT2oycOOR1Jxig_vg5thXgU'; 
+        const SUPABASE_ANON_KEY = 'sb_publishable_1XIR9lKBrT2oykOOR1Jxig_vg5thXgU'; 
         const CHECKLIST_TABLE_NAME = 'sacristy_tasks'; 
 
         let supabase = null; 
@@ -185,7 +185,7 @@
         // DADOS LITÚRGICOS E DA AGENDA
         // ======================================================
 
-        // 🚨 CORREÇÃO CRÍTICA: Data Dinâmica - Obter a data atual do dispositivo
+        // 🚨 CRÍTICO: Função que pega a data atual do dispositivo
         function getTodayAgendaString() {
             const today = new Date();
             const day = today.getDate().toString().padStart(2, '0');
@@ -198,9 +198,8 @@
             return `${day}/${monthAbbr} (${dayOfWeek})`;
         }
         const TODAY_DATE = getTodayAgendaString(); 
-        // -----------------------------------------------------------------
         
-        const AGENDA_DATA = [ /* ... (Dados da Agenda Mantidos) ... */
+        const AGENDA_DATA = [ /* ... (Dados da Agenda) ... */
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:00", "title": "Santa Missa", "location": "Setor 3 – Bairro Mendanha (Pe. Erick)" },
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Retirinho (Pe. Edimilson)" },
@@ -220,7 +219,9 @@
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:30", "title": "Santa Missa", "location": "Setor 7 – Bairro Retiro dos Marins (Pe. Erick)" },
             { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "11:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Palmeiras (Pe. Erick)" },
-            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 5 – Bairro Roseira (Pe. Edimilson)" }
+            { "date": "30/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 5 – Bairro Roseira (Pe. Edimilson)" },
+            // Blindagem: Adicionado para evitar crash se a data do dispositivo for 01/Dec
+            { "date": "01/Dec (Segunda-feira)", "dayOfWeek": "SEG", "time": "00:00", "title": "Folga", "location": "Nenhuma Missa" },
         ];
         
         // Checklist da Missa - FINAL
@@ -322,8 +323,8 @@
             "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" }, 
             "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" }, 
             "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, 
-            // 🚨 CORREÇÃO LITÚRGICA SOLICITADA PELO USUÁRIO: 1º DOMINGO DO ADVENTO
-            "30/Nov": { color: "ROXO", title: "1º Domingo do Advento (Ano A)" } 
+            "30/Nov": { color: "ROXO", title: "1º Domingo do Advento (Ano A)" }, // Corrigido
+            "01/Dec": { color: "ROXO", title: "Féria do Advento" } // Novo, para evitar erros de inicialização.
         };
 
         const LITURGICAL_COLORS = {
@@ -354,6 +355,4 @@
             document.documentElement.style.setProperty('--agenda-card-bg', primary); 
             document.documentElement.style.setProperty('--bg-dark-color', darkTone); // Fundo do body agora dinâmico
             
-            // Gerar a cor transparente para o liquid glass com base na darkTone do dia
-            const cardOpacity = '0.75';
-            const rgbaDarkTone = darkTone.replace('#', 'rgba(' + parseInt(darkTone.substring(1, 3), 16) + ',' + parseInt(dar
+            // Gerar a cor transparente para o liquid glass com base na darkTone do di
