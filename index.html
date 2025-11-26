@@ -22,7 +22,7 @@
     
     <style>
         /* ================================================= */
-        /* VARIÁVEIS DE COR (INJETADAS PELO JS COM BASE NA LITURGIA) */
+        /* VARIÁVEIS DE COR */
         /* ================================================= */
         :root {
             --bg-dark-color: #501515; 
@@ -31,8 +31,7 @@
             --secondary-contrast: #fcd34d; 
             --card-transparent: rgba(80, 21, 21, 0.7); 
             --primary-highlight-shadow: rgba(220, 38, 38, 0.4);
-            /* Novas variáveis para o layout "tipo assim" */
-            --agenda-card-bg: #DC2626; /* Vermelho forte para os cards */
+            --agenda-card-bg: #DC2626; 
             --agenda-card-text: #FEEEEE;
             --agenda-card-shadow: rgba(0, 0, 0, 0.3);
         }
@@ -44,17 +43,7 @@
             transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
-        /* LIQUID GLASS (DARK MODE AJUSTADO) */
-        .card { 
-            background-color: var(--card-transparent); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.5); 
-            border-radius: 1rem; 
-            transition: background-color 0.4s ease;
-        }
-        .header-bg { 
+        .header-bg { /* ... (CSS Mantido) ... */
             background-color: var(--card-transparent); 
             backdrop-filter: blur(12px); 
             -webkit-backdrop-filter: blur(12px); 
@@ -70,70 +59,62 @@
         .date-button.active { background-color: var(--active-bg-color); color: var(--text-light-color); font-weight: 900; box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5), -6px -6px 15px var(--active-shadow-light); transform: scale(1.05); }
         .date-button span.day-number { font-size: 1.5rem; line-height: 1; }
         .agenda-details { margin-bottom: 1.5rem; }
-        .checklist-content { padding: 1rem; padding-top: 0.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1); background-color: rgba(0, 0, 0, 0.2); border-radius: 0 0 0.75rem 0.75rem; }
-        .checklist-item { display: flex; align-items: center; padding: 0.4rem 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); }
-        .checklist-item input[type="checkbox"] { margin-right: 0.75rem; accent-color: var(--primary-highlight); width: 1.25rem; height: 1.25rem; cursor: pointer; }
         
         /* ESTILOS PARA OS BLOCOS DA AGENDA (Layout "tipo assim") */
-        .agenda-card, .task-header-card, .rotina-card {
+        .agenda-card, .task-header-card {
             background-color: var(--agenda-card-bg);
             color: var(--agenda-card-text);
-            border-radius: 1.5rem; /* Bordas mais arredondadas como na imagem */
+            border-radius: 1.5rem; 
             box-shadow: 0 4px 15px var(--agenda-card-shadow);
-            padding: 1.5rem; /* Padding generoso */
+            padding: 1.5rem; 
             text-align: center;
-            margin-bottom: 1.5rem; /* Espaçamento entre os cards */
+            margin-bottom: 1.5rem; 
         }
 
-        .task-header-card h2 {
-            font-size: 2.5rem; /* Tamanho da fonte grande */
-            font-weight: 900; /* Extra bold */
-            line-height: 1;
-        }
-
-        .agenda-card .time-title {
-            font-size: 2rem; /* Hora grande */
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 0.5rem;
-        }
-        .agenda-card .location-details {
-            font-size: 1.25rem; /* Detalhes da localização */
-            font-weight: 700;
-            line-height: 1.2;
-            opacity: 0.9;
-        }
-        .agenda-card .priest-name {
-            font-size: 1rem;
-            opacity: 0.8;
-            margin-top: 0.25rem;
-        }
+        .task-header-card h2 { font-size: 2.5rem; font-weight: 900; line-height: 1; }
+        .agenda-card .time-title { font-size: 2rem; font-weight: 900; line-height: 1.1; margin-bottom: 0.5rem; }
+        .agenda-card .location-details { font-size: 1.25rem; font-weight: 700; line-height: 1.2; opacity: 0.9; }
+        .agenda-card .priest-name { font-size: 1rem; opacity: 0.8; margin-top: 0.25rem; }
         
-        /* NOVO ESTILO PARA TAREFAS DE ROTINA DENTRO DO CARD */
+        /* ESTILOS DO CHECKLIST (Comum para Rotina e Missa) */
+        .checklist-content { 
+            padding: 1rem; 
+            padding-top: 0.5rem; 
+            border-top: 1px solid rgba(255, 255, 255, 0.1); 
+            background-color: rgba(0, 0, 0, 0.2); 
+            border-radius: 0 0 0.75rem 0.75rem; 
+        }
+        .checklist-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 0.4rem 0; 
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1); 
+        }
+        .checklist-item input[type="checkbox"] { 
+            margin-right: 0.75rem; 
+            accent-color: var(--primary-highlight); 
+            width: 1.25rem; 
+            height: 1.25rem; 
+            cursor: pointer; 
+        }
         .rotina-card {
-            background-color: var(--agenda-card-bg) !important; /* Força o vermelho */
+            background-color: var(--agenda-card-bg) !important; 
             text-align: left;
             padding: 1rem 1.5rem;
-            margin-top: -1rem; /* Aproxima do card Tarefas */
+            margin-top: -1rem; 
             border-top-left-radius: 0;
             border-top-right-radius: 0;
-            
-        }
-        .rotina-list {
-            list-style-type: none; /* Remove marcadores de lista */
-            padding: 0;
-            margin: 0;
+            margin-bottom: 1.5rem; /* Adicionado para espaçar dos blocos de missa */
         }
         .rotina-list li {
             padding: 0.4rem 0;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.2); /* Linha tracejada suave */
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.2); 
             font-size: 1rem;
             font-weight: 500;
         }
         .rotina-list li:last-child {
-            border-bottom: none; /* Remove a linha do último item */
+            border-bottom: none; 
         }
-
 
     </style>
 
@@ -185,7 +166,7 @@
 
         const TODAY_DATE = "25/Nov (Terça-feira)"; 
         
-        const AGENDA_DATA = [
+        const AGENDA_DATA = [ /* ... (Dados da Agenda Mantidos) ... */
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "09:00", "title": "Santa Missa", "location": "Setor 3 – Bairro Mendanha (Pe. Erick)" },
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "18:00", "title": "Santa Missa", "location": "Setor 1 – Bairro Retirinho (Pe. Edimilson)" },
@@ -212,16 +193,13 @@
             "Água (Galhetas)", "Vinho (Galhetas)", "Patena (Pão Consagrado)", "Cálice (Corporal, Purificatório)", "Âmbula (Reservar Hóstias)", "Hóstia Grande (Para o Sacerdote)", "Hóstia Pequena (Para os Fiéis)", "Livros (Lecionário/Missal)", "Coleta (Cestas)", "Toalhas e Sinos" 
         ];
 
-        // *** NOVO OBJETO: TAREFAS DE ROTINA POR DIA DA SEMANA ***
+        // *** NOVO OBJETO: TAREFAS DE ROTINA POR DIA DA SEMANA (Revisado) ***
         const tarefasRotinaSemanal = {
             // 0: Domingo
             0: [
                 "Organizar Mala de missas (Diário)",
                 "Organizar Mala do Hotel (Diário)",
                 "Higienizar vasos sagrados (Após cada Missa)",
-                "Limpar bancos (Geral)",
-                "Limpar portas (Geral)",
-                "Limpar coro (Geral)"
             ],
             // 1: Segunda-feira
             1: [
@@ -231,40 +209,28 @@
                 "Lavar e passar alfaias e toalhas",
                 "Higienizar vasos sagrados das malas",
                 "Organizar Mala de missas (Diário)",
-                "Limpar bancos (Geral)",
-                "Limpar portas (Geral)",
-                "Limpar coro (Geral)"
             ],
-            // 2: Terça-feira
+            // 2: Terça-feira (Nova regra: Limpar bancos + Limpar Portas 1x/mês)
             2: [
                 "Lavar vestes de leitores",
-                "Organizar Mala de missas (Diário)",
-                "Higienizar vasos sagrados (Após cada Missa)",
                 "Limpar bancos (Geral)",
-                "Limpar portas (Geral)",
-                "Limpar coro (Geral)"
+                "Limpar portas (1ª Terça-feira do Mês)",
+                "Organizar Mala de missas (Diário)",
             ],
             // 3: Quarta-feira
             3: [
-                "Passar alfaias",
                 "Organizar Armário sacristia",
-                "Limpar imagens e altares (Apenas na 1ª e 3ª do mês)",
+                "Limpar imagens e altares (1ª e 3ª do mês)",
                 "Organizar Mala de missas (Diário)",
-                "Higienizar vasos sagrados (Após cada Missa)",
-                "Limpar bancos (Geral)",
-                "Limpar portas (Geral)",
-                "Limpar coro (Geral)"
             ],
-            // 4: Quinta-feira
+            // 4: Quinta-feira (Nova regra: Limpar Coro)
             4: [
+                "Limpar coro (Geral)",
                 "Varrer o passeio e escadaria central",
                 "Limpar coro, escadaria e batistério",
                 "Passar vestes de leitores e toalha do altar",
                 "Higienizar vasos sagrados das malas",
                 "Organizar Mala de missas (Diário)",
-                "Higienizar vasos sagrados (Após cada Missa)",
-                "Limpar bancos (Geral)",
-                "Limpar portas (Geral)"
             ],
             // 5: Sexta-feira
             5: [
@@ -273,33 +239,24 @@
                 "Lavar alfaias e toalhas",
                 "Higienização geral de vasos sagrados (Cálice, âmbulas, etc.)",
                 "Organizar Mala de missas (Diário)",
-                "Higienizar vasos sagrados (Após cada Missa)",
-                "Limpar bancos (Geral)",
-                "Limpar portas (Geral)",
-                "Limpar coro (Geral)"
             ],
             // 6: Sábado
             6: [
                 "Varrer o passeio e escadaria central",
                 "Jogar água no passeio/escadaria",
-                "Passar alfaias",
                 "Organizar Mala de missas (Diário)",
-                "Higienizar vasos sagrados (Após cada Missa)",
-                "Limpar bancos (Geral)",
-                "Limpar portas (Geral)",
-                "Limpar coro (Geral)"
             ]
         };
 
-        const LITURGICAL_INFO_MAP = { 
+        const LITURGICAL_INFO_MAP = { /* ... (Mantido) ... */
             "01/Nov": { color: "BRANCO", title: "Todos os Santos (Solenidade)" }, "02/Nov": { color: "ROXO", title: "Comemoração dos Fiéis Defuntos (Finados)" }, "03/Nov": { color: "BRANCO", title: "São Martinho de Porres, Presbítero (MF)" }, "04/Nov": { color: "BRANCO", title: "São Carlos Borromeu, Bispo (MO)" }, "05/Nov": { color: "VERDE", title: "Santos Zacarias e Isabel (Féria)" }, "06/Nov": { color: "VERDE", title: "São Nuno Álvares Pereira (Féria)" }, "07/Nov": { color: "VERDE", title: "São Vilibrordo (Féria)" }, "08/Nov": { color: "BRANCO", title: "Santa Isabel da Trindade (N. Sra. no Sábado)" }, "09/Nov": { color: "BRANCO", title: "Dedicação da Basílica de Latrão (Festa)" }, "10/Nov": { color: "BRANCO", title: "São Leão Magno, Papa e Doutor da Igreja" }, "11/Nov": { color: "BRANCO", title: "São Martinho de Tours, Bispo" }, "12/Nov": { color: "VERMELHO", title: "São Josafá Kuncewicz, Bispo e Mártir" }, "13/Nov": { color: "VERDE", title: "São Diogo de Alcalá (Féria)" }, "14/Nov": { color: "VERDE", title: "São Gregório Palamas (Féria)" }, "15/Nov": { color: "BRANCO", title: "Santo Alberto Magno, Bispo e Doutor da Igreja" }, "16/Nov": { color: "BRANCO", title: "Santa Margarida da Escócia / Santa Gertrudes" }, "17/Nov": { color: "VERDE", title: "Santa Isabel da Hungria (Féria)" }, "18/Nov": { color: "BRANCO", title: "Dedicação das Basílicas de S. Pedro e S. Paulo" }, "19/Nov": { color: "VERMELHO", title: "Santos Roque G. e Comp., Mártires (MO)" }, "20/Nov": { color: "VERDE", title: "São Félix de Valois (Féria)" }, "21/Nov": { color: "BRANCO", title: "Apresentação de Nossa Senhora (Memória)" }, "22/Nov": { color: "VERMELHO", title: "Santa Cecília, Virgem e Mártir (Memória)" }, "23/Nov": { color: "BRANCO", title: "Nosso Senhor Jesus Cristo Rei do Universo (Solenidade)" }, "24/Nov": { color: "VERMELHO", title: "Santos André Dung-Lac e Comp., Mártires (MO)" }, "25/Nov": { color: "VERMELHO", title: "Santa Catarina de Alexandria, Virgem e Mártir" }, "26/Nov": { color: "VERDE", title: "São Leonardo de Porto Maurício (Féria)" }, "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" }, "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" }, "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, "30/Nov": { color: "VERMELHO", title: "Santo André, Apóstolo (Festa)" } 
         };
 
-        const LITURGICAL_COLORS = {
+        const LITURGICAL_COLORS = { /* ... (Mantido) ... */
             "BRANCO": ["#FBBF24", "rgba(255, 240, 180, 0.6)", "#B45309", "rgba(251, 191, 36, 0.4)"], "VERMELHO": ["#DC2626", "rgba(255, 100, 100, 0.6)", "#501515", "rgba(220, 38, 38, 0.4)"], "ROXO": ["#8B5CF6", "rgba(180, 150, 255, 0.6)", "#4338CA", "rgba(139, 92, 246, 0.4)"], "VERDE": ["#10B981", "rgba(150, 255, 200, 0.6)", "#065F46", "rgba(16, 185, 129, 0.4)"],
         };
 
-        function getLiturgicalInfo(dateStr) { 
+        function getLiturgicalInfo(dateStr) { /* ... (Mantido) ... */
             const dayMonth = dateStr.split(' ')[0];
             const info = LITURGICAL_INFO_MAP[dayMonth];
             
@@ -310,7 +267,7 @@
             return { colorName: "VERDE", title: "Féria (Dia Comum)", colors: LITURGICAL_COLORS["VERDE"] };
         }
 
-        function applyDynamicTheme(colors) { 
+        function applyDynamicTheme(colors) { /* ... (Mantido) ... */
             const [primary, shadowLight, darkTone, shadowBox] = colors;
             
             document.documentElement.style.setProperty('--primary-highlight', primary);
@@ -339,7 +296,7 @@
         let touchstartY = 0;
         const SWIPE_THRESHOLD = 80;  
 
-        function getUniqueDates() { 
+        function getUniqueDates() { /* ... (Mantido) ... */
              const dates = AGENDA_DATA.map(item => item.date.trim());
              uniqueDates = [...new Set(dates)];
              if (currentSelectedDate === '') {
@@ -348,7 +305,7 @@
              }
         }
         
-        function renderDatePicker() { 
+        function renderDatePicker() { /* ... (Mantido) ... */
             getUniqueDates();
             const container = document.getElementById('date-picker-container');
             if (!container) return; 
@@ -397,36 +354,36 @@
             renderDatePicker(); 
         }
 
-        // --- NOVO CÓDIGO: EXIBIÇÃO DE ROTINAS DIÁRIAS (Chamado dentro de renderAgenda) ---
-        function exibirRotinasDiarias(currentDate, container) {
+        // --- FUNÇÃO DE RENDERIZAÇÃO DE ROTINAS (Com Checkbox e Sincronização) ---
+        async function exibirRotinasDiarias(currentDate, container) {
             
-            // Note: Não podemos usar new Date() diretamente em '25/Nov' sem o ano, pode falhar.
-            // Usamos a lógica de dia da semana do AGENDA_DATA ou a data do sistema
-            const dateParts = currentDate.split('/');
-            const monthDay = dateParts[0];
-            const currentYear = new Date().getFullYear();
-            
-            // Simulação de objeto Date para obter o dia da semana (0-6)
-            let date = new Date(currentYear + '-' + monthDay.trim().split(' ')[0] + '-1'); // Cria uma data fake no mês
-            
-            // Tentativa de obter o dia da semana real (precisa de uma data completa)
-            // Se falhar, vamos pegar o dia da semana atual do sistema
-            let diaDaSemana = new Date().getDay(); 
-            
-            // Tentativa de obter o dia da semana a partir do AGENDA_DATA para maior precisão
+            // Lógica para obter o dia da semana (0-6)
             const dayText = currentDate.split('(')[1]?.replace(')', '')?.trim();
             const dayMap = {'DOM': 0, 'SEG': 1, 'TER': 2, 'QUA': 3, 'QUI': 4, 'SEX': 5, 'SÁB': 6};
             const dayMatch = Object.keys(dayMap).find(key => dayText.toUpperCase().startsWith(key));
-            if (dayMatch) {
-                diaDaSemana = dayMap[dayMatch];
-            }
+            const diaDaSemana = dayMatch ? dayMap[dayMatch] : new Date().getDay(); 
 
+            // ID FIXO PARA SINCRONIZAR A LISTA DE ROTINAS GERAIS
+            const ROTINA_MASS_ID = 'ROTINA_GERAL';
+            const checkedTaskIds = await loadChecklistStatus(ROTINA_MASS_ID);
+            
             const rotinasDoDia = tarefasRotinaSemanal[diaDaSemana];
             let rotinasHtml = '';
 
             if (rotinasDoDia && rotinasDoDia.length > 0) {
-                rotinasDoDia.forEach(tarefa => {
-                    rotinasHtml += `<li class="rotina-item">${tarefa}</li>`;
+                rotinasDoDia.forEach((tarefa, index) => {
+                    const taskId = `rotina_task${index}`;
+                    const isChecked = checkedTaskIds.includes(taskId);
+                    const checkedAttribute = isChecked ? 'checked' : '';
+                    const opacityClass = isChecked ? 'opacity-50' : '';
+
+                    rotinasHtml += `
+                        <li class="checklist-item ${opacityClass}">
+                            <input type="checkbox" id="rotina-task-${index}" ${checkedAttribute}
+                                onclick="saveChecklistStatus('${ROTINA_MASS_ID}', '${taskId}', this.checked); this.parentNode.classList.toggle('opacity-50', this.checked);">
+                            <label for="rotina-task-${index}" class="text-sm font-medium cursor-pointer">${tarefa}</label>
+                        </li>
+                    `;
                 });
             } else {
                 rotinasHtml += `<li class="rotina-item">Nenhuma tarefa de rotina específica programada.</li>`;
@@ -437,8 +394,8 @@
                 <div class="task-header-card" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
                     <h2>Tarefas</h2>
                 </div>
-                <div class="rotina-card" style="border-top-left-radius: 0; border-top-right-radius: 0; padding-top: 1rem;">
-                    <ul id="lista-rotinas" class="rotina-list">
+                <div class="rotina-card checklist-content" style="border-top-left-radius: 0; border-top-right-radius: 0; padding-top: 1rem;">
+                    <ul id="lista-rotinas" class="rotina-list list-none space-y-1">
                         ${rotinasHtml}
                     </ul>
                 </div>
@@ -455,12 +412,12 @@
             const dateOnly = currentSelectedDate.split(' ')[0];
 
             // 1. Renderiza o cabeçalho "Tarefas" e a lista de Rotinas
-            exibirRotinasDiarias(currentSelectedDate, container);
+            await exibirRotinasDiarias(currentSelectedDate, container);
 
             // 2. Renderiza a Missa do Dia ou mensagem de folga
             if (filteredData.length > 0) {
                 // Renderiza o cabeçalho para separar as seções
-                container.innerHTML += `<div class="mb-4 text-center"><p class="text-xl font-bold header-title-text">${dateOnly}</p><p class="text-sm font-bold opacity-80 mt-1">Checklist da Missa (Sincronizado!)</p></div>`;
+                container.innerHTML += `<div class="mb-4 text-center"><p class="text-3xl font-extrabold header-title-text">${dateOnly}</p><p class="text-sm font-bold opacity-80 mt-1">Checklist da Missa (Sincronizado!)</p></div>`;
 
                 // Geração da Lista de Missas
                 for (const event of filteredData) {
