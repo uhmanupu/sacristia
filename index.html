@@ -323,8 +323,8 @@
             "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" }, 
             "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" }, 
             "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, 
-            "30/Nov": { color: "ROXO", title: "1º Domingo do Advento (Ano A)" }, // Corrigido
-            "01/Dec": { color: "ROXO", title: "Féria do Advento" } // Novo, para evitar erros de inicialização.
+            "30/Nov": { color: "ROXO", title: "1º Domingo do Advento (Ano A)" }, 
+            "01/Dec": { color: "ROXO", title: "Féria do Advento" } 
         };
 
         const LITURGICAL_COLORS = {
@@ -355,4 +355,6 @@
             document.documentElement.style.setProperty('--agenda-card-bg', primary); 
             document.documentElement.style.setProperty('--bg-dark-color', darkTone); // Fundo do body agora dinâmico
             
-            // Gerar a cor transparente para o liquid glass com base na darkTone do di
+            // Gerar a cor transparente para o liquid glass com base na darkTone do dia
+            const cardOpacity = '0.75';
+            co
