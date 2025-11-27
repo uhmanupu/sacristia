@@ -185,20 +185,7 @@
         // DADOS LITÚRGICOS E DA AGENDA
         // ======================================================
 
-        // 🚨 CORREÇÃO CRÍTICA: Data Dinâmica - Obter a data atual do dispositivo
-        function getTodayAgendaString() {
-            const today = new Date();
-            const day = today.getDate().toString().padStart(2, '0');
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const dayNames = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-            
-            const monthAbbr = monthNames[today.getMonth()];
-            const dayOfWeek = dayNames[today.getDay()];
-            
-            return `${day}/${monthAbbr} (${dayOfWeek})`;
-        }
-        const TODAY_DATE = getTodayAgendaString(); 
-        // -----------------------------------------------------------------
+        const TODAY_DATE = "25/Nov (Terça-feira)"; 
         
         const AGENDA_DATA = [ /* ... (Dados da Agenda Mantidos) ... */
             { "date": "23/Nov (Domingo)", "dayOfWeek": "DOM", "time": "07:00", "title": "Santa Missa", "location": "Igreja Matriz (Pe. Edimilson)" },
@@ -334,4 +321,23 @@
             document.body.style.backgroundColor = darkTone;
             const themeMeta = document.querySelector('meta[name="theme-color"]');
             if (themeMeta) {
-          
+                themeMeta.setAttribute('content', darkTone);
+            }
+
+            // Atualizar o santo do dia
+            const santoDoDiaElement = document.getElementById('santo-do-dia');
+            if (santoDoDiaElement) {
+                santoDoDiaElement.textContent = liturgicalTitle;
+            }
+        }
+        
+        let uniqueDates = [];
+        let currentSelectedDate = ''; 
+        let touchstartX = 0;
+        let touchstartY = 0;
+        const SWIPE_THRESHOLD = 80;  
+
+        // Função utilitária para converter a data do AGENDA_DATA em objeto Date
+        function getDateObjectFromAgendaString(agendaDateStr) {
+            const dateOnly = agendaDateStr.split('(')[0].trim(); // Ex: 25/Nov
+            const [day, monthAbbr] = dateOnly.split('/'
