@@ -30,6 +30,7 @@
             --primary-highlight: #DC2626; 
             --secondary-contrast: #fcd34d; 
             --primary-highlight-shadow: rgba(220, 38, 38, 0.4);
+            /* --card-transparent e --agenda-card-bg serão definidos via JS/RGBA */
         }
         
         body { 
@@ -39,13 +40,11 @@
             transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
-        /* LIQUID GLASS: Aplicado a todos os elementos de fundo principais */
+        /* CARD STYLE - AGORA COM OPACIDADE SIMPLES (TRANSPARÊNCIA FOSCA) */
         .card, .header-bg, .agenda-card, .task-header-card, .rotina-card, .date-button { 
             background-color: var(--card-transparent); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Borda sutil */
+            box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.3); /* Sombra mais suave */
             transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
         }
 
@@ -74,14 +73,15 @@
         .date-button span.day-number { font-size: 1.5rem; line-height: 1; }
         .agenda-details { margin-bottom: 1.5rem; }
         
-        /* ESTILOS PARA OS BLOCOS DA AGENDA (Liquid Glass) */
+        /* ESTILOS PARA OS BLOCOS DA AGENDA */
         .agenda-card, .task-header-card {
+            background-color: var(--agenda-card-bg); /* Já com transparência via JS */
+            color: var(--agenda-card-text);
             border-radius: 1.5rem; 
+            box-shadow: 0 4px 15px var(--agenda-card-shadow);
             padding: 1.5rem; 
             text-align: center;
             margin-bottom: 1.5rem; 
-            background-color: var(--agenda-card-bg); /* Transparência da cor primária */
-            color: var(--text-light-color);
         }
 
         .task-header-card h2 { font-size: 2.5rem; font-weight: 900; line-height: 1; }
@@ -89,15 +89,13 @@
         .agenda-card .location-details { font-size: 1.25rem; font-weight: 700; line-height: 1.2; opacity: 0.9; }
         .agenda-card .priest-name { font-size: 1rem; opacity: 0.8; margin-top: 0.25rem; }
         
-        /* ESTILOS DO CHECKLIST (Conteúdo da expansão) */
+        /* ESTILOS DO CHECKLIST */
         .checklist-content { 
             padding: 1rem; 
             padding-top: 0.5rem; 
             border-top: 1px solid rgba(255, 255, 255, 0.1); 
-            background-color: rgba(0, 0, 0, 0.2); 
+            background-color: rgba(0, 0, 0, 0.2); /* Fundo sutilmente escuro para contraste */
             border-radius: 0 0 0.75rem 0.75rem; 
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
         }
         .checklist-item { 
             display: flex; 
@@ -113,13 +111,13 @@
             cursor: pointer; 
         }
         .rotina-card {
+            background-color: var(--card-transparent) !important; 
             text-align: left;
             padding: 1rem 1.5rem;
             margin-top: -1.5rem; 
             border-top-left-radius: 0;
             border-top-right-radius: 0;
             margin-bottom: 1.5rem; 
-            background-color: var(--card-transparent) !important; 
         }
         .rotina-list li {
             padding: 0.4rem 0;
@@ -263,7 +261,8 @@
             "23/Nov": { color: "BRANCO", title: "Nosso Senhor Jesus Cristo Rei do Universo (Solenidade)" }, "24/Nov": { color: "VERMELHO", title: "Santos André Dung-Lac e Comp., Mártires (MO)" }, 
             "25/Nov": { color: "VERMELHO", title: "Santa Catarina de Alexandria, Virgem e Mártir" }, "26/Nov": { color: "VERDE", title: "São Leonardo de Porto Maurício (Féria)" }, 
             "27/Nov": { color: "BRANCO", title: "Nossa Senhora das Graças / Medalha Milagrosa (MF)" }, "28/Nov": { color: "VERDE", title: "Santa Catarina Labouré (Féria)" }, 
-            "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, "30/Nov": { color: "ROXO", title: "1º Domingo do Advento (Ano A)" }, 
+            "29/Nov": { color: "VERMELHO", title: "São Saturnino de Tolosa (Memória)" }, 
+            "30/Nov": { color: "ROXO", title: "1º Domingo do Advento (Ano A)" }, // CORREÇÃO LITÚRGICA
             "01/Dec": { color: "ROXO", title: "Féria do Advento" } 
         };
 
@@ -273,18 +272,7 @@
             "VERDE": ["#006041", "rgba(0, 96, 65, 0.6)", "#003020", "rgba(0, 96, 65, 0.4)"],
             "ROXO": ["#3B3879", "rgba(59, 56, 121, 0.6)", "#1E1C3D", "rgba(59, 56, 121, 0.4)"],
         };
-
-        function getLiturgicalInfo(dateStr) { 
-            const dayMonth = dateStr.split(' ')[0];
-            const info = LITURGICAL_INFO_MAP[dayMonth];
-            
-            if (info) {
-                const colors = LITURGICAL_COLORS[info.color] || LITURGICAL_COLORS["VERDE"];
-                return { colorName: info.color, title: info.title, colors: colors };
-            }
-            return { colorName: "VERDE", title: "Féria (Dia Comum)", colors: LITURGICAL_COLORS["VERDE"] };
-        }
-
+        
         // Função para converter hex para RGBA
         function hexToRgba(hex, alpha) {
             let r = 0, g = 0, b = 0;
@@ -298,36 +286,47 @@
                 g = parseInt(hex.substring(3, 5), 16);
                 b = parseInt(hex.substring(5, 7), 16);
             } else {
-                return `rgba(0, 0, 0, ${alpha})`; // Fallback seguro
+                return `rgba(0, 0, 0, ${alpha})`; 
             }
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
 
 
+        function getLiturgicalInfo(dateStr) { 
+            const dayMonth = dateStr.split(' ')[0];
+            const info = LITURGICAL_INFO_MAP[dayMonth];
+            
+            if (info) {
+                const colors = LITURGICAL_COLORS[info.color] || LITURGICAL_COLORS["VERDE"];
+                return { colorName: info.color, title: info.title, colors: colors };
+            }
+            return { colorName: "VERDE", title: "Féria (Dia Comum)", colors: LITURGICAL_COLORS["VERDE"] };
+        }
+
         function applyDynamicTheme(colors, liturgicalTitle) { 
             const [primaryHex, shadowLight, darkToneHex, shadowBox] = colors;
             
-            // Converte os hex para RGBA com transparência desejada para o liquid glass
-            const cardBgRgba = hexToRgba(primaryHex, 0.7); // Cor principal do card com transparência
-            const darkBgRgba = hexToRgba(darkToneHex, 0.9); // Fundo principal um pouco mais opaco para a base
-
             // Setar variáveis CSS para cores dinâmicas
             document.documentElement.style.setProperty('--primary-highlight', primaryHex);
             document.documentElement.style.setProperty('--secondary-contrast', (darkToneHex === "#66500B" ? "#A68213" : "#FEEEEE")); 
             document.documentElement.style.setProperty('--primary-highlight-shadow', shadowBox);
             
-            // AGORA PARA O LIQUID GLASS
+            // CONFIGURAÇÃO DA TRANSPARÊNCIA FOSCA
+            const cardBgRgba = hexToRgba(primaryHex, 0.7); // 70% de opacidade para Cartões
+            const darkBgRgba = hexToRgba(darkToneHex, 0.9); // 90% de opacidade para Fundo/Header
+
             document.documentElement.style.setProperty('--card-transparent', darkBgRgba); 
             document.documentElement.style.setProperty('--bg-dark-color', darkToneHex); 
-            document.documentElement.style.setProperty('--agenda-card-bg', cardBgRgba); 
+            document.documentElement.style.setProperty('--agenda-card-bg', cardBgRgba); // Cartões usam cor primária transparente
 
             // Atualizar cor de fundo do body
-            document.body.style.backgroundColor = darkToneHex; // Fundo opaco
+            document.body.style.backgroundColor = darkToneHex; 
             
-            // 🚨 Blindagem da meta tag
+            // Blindagem da meta tag
             const themeMeta = document.querySelector('meta[name="theme-color"]');
             if (themeMeta) {
                 themeMeta.setAttribute('content', darkToneHex);
             }
 
-     
+            // Atualizar o santo do dia
+         
