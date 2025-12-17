@@ -1,0 +1,5 @@
+{
+  "name": "SACRISTIA",
+  "description": "Agenda litúrgica e rotinas da sacristia com integração Supabase",
+  "requestFramePermissions": []
+}
