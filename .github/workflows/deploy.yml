@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ] # Garanta que a sua branch se chama main (ou mude para master)
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -26,9 +26,9 @@ jobs:
         run: npm install
 
       - name: Build
-        # Aqui injetamos a chave secreta que configurou no GitHub Settings
         run: npm run build
         env:
+          # Aqui o robô injeta a sua chave secreta no Build
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Upload Artifacts
@@ -43,6 +43,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
