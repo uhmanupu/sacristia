@@ -1,5 +1,16 @@
 {
-  "name": "SACRISTIA",
-  "description": "Agenda litúrgica e rotinas da sacristia com integração Supabase",
-  "requestFramePermissions": []
+  "paroquia": "Sacristia - Agenda Paroquial",
+  "agenda": [
+    { "dia": "16", "dia_semana": "Terça-feira", "cor": "Roxo", "liturgia": "3ª Semana do Advento", "eventos": ["09:00 Confissões", "19:00 Missa Setor 1"] },
+    { "dia": "17", "dia_semana": "Quarta-feira", "cor": "Roxo", "liturgia": "3ª Semana do Advento", "eventos": ["09:00 Atendimento", "14:00 Confissões"] },
+    { "dia": "18", "dia_semana": "Quinta-feira", "cor": "Roxo", "liturgia": "4ª Semana do Advento", "eventos": ["18:00 Adoração", "19:00 Missa Matriz"] },
+    { "dia": "24", "dia_semana": "Quarta-feira", "cor": "Branco", "liturgia": "Véspera de Natal", "eventos": ["20:00 Missa do Galo"] },
+    { "dia": "25", "dia_semana": "Quinta-feira", "cor": "Branco", "liturgia": "Natal do Senhor", "eventos": ["09:00 Missa Matriz", "19:00 Missa Matriz"] },
+    { "dia": "26", "dia_semana": "Sexta-feira", "cor": "Vermelho", "liturgia": "Santo Estêvão", "eventos": ["19:00 Missa Sagrado Coração"] },
+    { "dia": "27", "dia_semana": "Sábado", "cor": "Branco", "liturgia": "São João Evangelista", "eventos": ["19:00 Missa Matriz"] },
+    { "dia": "28", "dia_semana": "Domingo", "cor": "Branco", "liturgia": "Sagrada Família", "eventos": ["09:00 Missa Matriz", "19:00 Missa Matriz"] },
+    { "dia": "31", "dia_semana": "Quarta-feira", "cor": "Branco", "liturgia": "São Silvestre / Oitava de Natal", "eventos": ["19:30 Missa Matriz"] },
+    { "dia": "01", "dia_semana": "Quinta-feira", "cor": "Branco", "liturgia": "Santa Maria, Mãe de Deus", "eventos": ["19:00 Missa Matriz"] },
+    { "dia": "02", "dia_semana": "Sexta-feira", "cor": "Branco", "liturgia": "Ss. Basílio e Gregório", "eventos": ["19:00 Missa Matriz"] }
+  ]
 }
