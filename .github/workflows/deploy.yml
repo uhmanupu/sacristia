@@ -1,28 +1,48 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ] # Garanta que a sua branch se chama main (ou mude para master)
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 jobs:
-  build:
+  build_site:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        # Aqui injetamos a chave secreta que configurou no GitHub Settings
+        run: npm run build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist/
+
   deploy:
-    needs: build
+    needs: build_site
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
